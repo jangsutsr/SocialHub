@@ -34,8 +34,8 @@ TODO:
 '''
 urlpatterns = [
     url(r'^register$', views.register),
-    url(r'^login$', views.login),
-    url(r'^logout$', views.logout),
+    url(r'^login$', views.log_in),
+    url(r'^logout$', views.log_out),
     url(r'^attach/(?P<app_name>[a-z]+)', views.attach),
     url(r'^show/twitter$', views.show_twitters)
 ]

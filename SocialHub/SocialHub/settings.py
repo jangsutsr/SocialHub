@@ -47,7 +47,6 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'SocialHub.middlewares.CheckUserMiddleware'
 ]
 
 ROOT_URLCONF = 'SocialHub.urls'
@@ -101,6 +100,8 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+AUTH_PROFILE_MODULE = 'main_app.models.UserProfile'
+LOGIN_URL = '/login'
 
 
 # Internationalization
