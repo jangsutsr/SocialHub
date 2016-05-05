@@ -7,7 +7,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from json import dumps
 from .forms import UserForm, FacebookUserForm, TwitterUserForm
-from .models import UserProfile, TwitterMessage
+from .models import UserProfile, TwitterMessage, FacebookMessage
 
 @require_http_methods(['POST'])
 def register(request):
@@ -68,6 +68,28 @@ def attach(request, app_name):
 
 @require_http_methods(['GET'])
 @login_required
+def show_fbs(request):
+    fb_list = FacebookMessage.get_posts(request.user)
+    for i in range(len(fb_list)):
+        fb_list[i]['time'] = fb_list[i]['time'].strftime('%a %b %d %H:%M:%S +0000 %Y')
+    return HttpResponse(dumps(fb_list, indent=2, ensure_ascii=False))
+
+@require_http_methods(['GET'])
+@login_required
 def show_twitters(request):
     tweet_list = TwitterMessage.get_tweets(request.user)
+    for i in range(len(tweet_list)):
+        tweet_list[i]['created_at'] = tweet_list[i]['created_at'].strftime('%a %b %d %H:%M:%S +0000 %Y')
     return HttpResponse(dumps(tweet_list, indent=2, ensure_ascii=False))
+
+@require_http_methods(['GET'])
+@login_required
+def update(request, app_name):
+    if app_name == 'facebook':
+        UserProfile.update_query_time(request.user, 1)
+        return HttpResponse('facebook account updated')
+    elif app_name == 'twitter':
+        UserProfile.update_query_time(request.user, 2)
+        return HttpResponse('twitter account updated')
+    else:
+        return HttpResponse('Unsupported social network')

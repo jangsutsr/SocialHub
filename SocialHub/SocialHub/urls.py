@@ -36,6 +36,8 @@ urlpatterns = [
     url(r'^register$', views.register),
     url(r'^login$', views.log_in),
     url(r'^logout$', views.log_out),
-    url(r'^attach/(?P<app_name>[a-z]+)', views.attach),
-    url(r'^show/twitter$', views.show_twitters)
+    url(r'^attach/(?P<app_name>[a-z]+)$', views.attach),
+    url(r'^show/twitter$', views.show_twitters),
+    url(r'^show/facebook$', views.show_fbs),
+    url(r'^update/(?<app_name>[a-z]+)$', views.update)
 ]
