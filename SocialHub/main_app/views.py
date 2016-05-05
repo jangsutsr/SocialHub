@@ -5,8 +5,9 @@ from django.db.utils import IntegrityError
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from json import dumps
 from .forms import UserForm, FacebookUserForm, TwitterUserForm
-from .models import UserProfile
+from .models import UserProfile, TwitterMessage
 
 @require_http_methods(['POST'])
 def register(request):
@@ -65,5 +66,8 @@ def attach(request, app_name):
     else:
         return HttpResponse('Unsupported social network')
 
+@require_http_methods(['GET'])
+@login_required
 def show_twitters(request):
-    pass
+    tweet_list = TwitterMessage.get_tweets(request.user)
+    return HttpResponse(dumps(tweet_list, indent=2, ensure_ascii=False))

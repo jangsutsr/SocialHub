@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 from django.db import models
 from django.db.utils import IntegrityError
 from django.contrib.auth.models import User
+import datetime
 
 class UserProfile(models.Model):
     user = models.ForeignKey(User,
@@ -11,10 +12,12 @@ class UserProfile(models.Model):
                                default='')
     fb_passwd = models.CharField(max_length=30,
                                  default='')
+    fb_last_query = models.DateTimeField(null=True)
     twitter_name = models.CharField(max_length=30,
                                     default='')
     twitter_passwd = models.CharField(max_length=30,
                                       default='')
+    twitter_last_query = models.DateTimeField(null=True)
 
     class Meta(object):
         db_table = 'user_profile'
@@ -31,11 +34,13 @@ class UserProfile(models.Model):
         if cate == 1:
             cls.objects.filter(user=user.id)\
                     .update(fb_name=form['name'].data,
-                            fb_passwd=form['passwd'].data)
+                            fb_passwd=form['passwd'].data,
+                            fb_last_query=datetime.datetime.utcnow())
         elif cate == 2:
             cls.objects.filter(user=user.id)\
                     .update(twitter_name=form['name'].data,
-                            twitter_passwd=form['passwd'].data)
+                            twitter_passwd=form['passwd'].data,
+                            twitter_last_query=datetime.datetime.utcnow())
 
 class FacebookMessage(models.Model):
     content = models.TextField(default='')
@@ -54,3 +59,15 @@ class TwitterMessage(models.Model):
                               default=None)
     class Meta(object):
         db_table = 'twitter_msg'
+
+    @classmethod
+    def get_tweets(cls, user):
+        twitter_last_query = UserProfile.objects.filter(user=user)\
+                                        .get()\
+                                        .twitter_last_query
+        if twitter_last_query is None:
+            pass
+        return list(cls.objects.filter(owner=user.id,
+                                       created_at__gte=twitter_last_query)\
+                               .order_by('created_at')\
+                               .values('author', 'text'))
