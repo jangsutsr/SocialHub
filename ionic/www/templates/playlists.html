@@ -1,0 +1,21 @@
+<ion-view view-title="Playlists">
+  <ion-content>
+  	<input type="text" ng-model="test" placeholder="Filter" style="width: 100%;padding: 10px">
+
+    <ion-list>
+      <ion-item ng-repeat="playlist in playlists | filter : test">
+        <div class="row">
+	      	<div class="col col-75" ng-click="detail({{playlist.id}})">
+	      		<p>{{playlist.id}}</p>
+	        	<p>{{playlist.title}}</p>
+	        </div>
+	        <div class="col">
+	        	<button class="button button-calm" ng-click="play('mp3/1.mp3')" style="float: right;">Play</button>
+	        </div>
+        </div>
+      </ion-item>
+    </ion-list>
+  </ion-content>
+
+
+</ion-view>
