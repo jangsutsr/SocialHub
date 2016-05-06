@@ -39,5 +39,5 @@ urlpatterns = [
     url(r'^attach/(?P<app_name>[a-z]+)$', views.attach),
     url(r'^show/twitter$', views.show_twitters),
     url(r'^show/facebook$', views.show_fbs),
-    url(r'^update/(?<app_name>[a-z]+)$', views.update)
+    url(r'^update/(?P<app_name>[a-z]+)$', views.update)
 ]
