@@ -16,28 +16,11 @@ Including another URLconf
 from django.conf.urls import url
 from main_app import views
 
-'''
-TODO:
-* Error msg pages: 404, 405, 403, 400, 500
-
-* user registration functionality corresponding to '/register' and POST method.
-    form data: name(text), passwd(text)
-
-* user login functionality corresponding to '/login' and POST method.
-    form data: name(text), passwd(text)
-
-* user login page corresponding to '/login' and GET method.
-
-* user attach account functionality corresponding to '/attach/facebook' and
-'/attach/twitter' with POST method.
-    form data: name(text), passwd(text)
-'''
 urlpatterns = [
     url(r'^register$', views.register),
     url(r'^login$', views.log_in),
     url(r'^logout$', views.log_out),
     url(r'^attach/(?P<app_name>[a-z]+)$', views.attach),
-    url(r'^show/twitter$', views.show_twitters),
-    url(r'^show/facebook$', views.show_fbs),
-    url(r'^update/(?P<app_name>[a-z]+)$', views.update)
+    url(r'^show$', views.show),
+    url(r'^history/(?P<offset>[0-9]+)$', views.history)
 ]

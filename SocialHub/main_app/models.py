@@ -9,16 +9,12 @@ class UserProfile(models.Model):
                              on_delete=models.CASCADE)
     fb_name = models.CharField(max_length=30,
                                default='')
-    fb_passwd = models.CharField(max_length=30,
-                                 default='')
-    fb_last_query = models.DateTimeField(null=True)
-    fb_last_fetch = models.DateTimeField(null=True)
+    fb_token = models.TextField(default='')
     twitter_name = models.CharField(max_length=30,
                                     default='')
-    twitter_passwd = models.CharField(max_length=30,
-                                      default='')
-    twitter_last_query = models.DateTimeField(null=True)
-    twitter_last_fetch = models.DateTimeField(null=True)
+    twitter_token = models.TextField(default='')
+    last_query = models.DateTimeField(null=True)
+    last_fetch = models.DateTimeField(null=True)
 
     class Meta(object):
         db_table = 'user_profile'
@@ -28,66 +24,51 @@ class UserProfile(models.Model):
 
     @classmethod
     def create_profile(cls, user):
-        cls.objects.create(user=user)
+        cls.objects.create(user=user,
+                           last_query=timezone.now(),
+                           last_fetch=timezone.now())
 
     @classmethod
     def insert_account(cls, form, user, cate):
         if cate == 1:
             cls.objects.filter(user=user.id)\
                     .update(fb_name=form['name'].data,
-                            fb_passwd=form['passwd'].data,
-                            fb_last_query=timezone.now(),
-                            fb_last_fetch=timezone.now())
+                            fb_token=form['passwd'].data)
         elif cate == 2:
             cls.objects.filter(user=user.id)\
                     .update(twitter_name=form['name'].data,
-                            twitter_passwd=form['passwd'].data,
-                            twitter_last_query=timezone.now(),
-                            twitter_last_fetch=timezone.now())
+                            twitter_token=form['passwd'].data)
 
     @classmethod
-    def update_query_time(cls, user, cate):
-        if cate == 1:
-            cls.objects.filter(user=user.id)\
-                       .update(fb_last_query=timezone.now())
-        elif cate == 2:
-            cls.objects.filter(user=user.id)\
-                       .update(twitter_last_query=timezone.now())
+    def update_query_time(cls, user):
+        cls.objects.filter(user=user.id)\
+                   .update(last_query=timezone.now())
 
-class FacebookMessage(models.Model):
+class Message(models.Model):
+    category = models.CharField(max_length=30,
+                                default='')
     message = models.TextField(default='')
     time = models.DateTimeField(default=None)
-    page_name = models.TextField(default='')
-    owner = models.ForeignKey(User,
-                              default=None)
-    class Meta(object):
-        db_table = 'facebook_msg'
-
-    @classmethod
-    def get_posts(cls, user):
-        fb_last_query = UserProfile.objects.filter(user=user)\
-                                           .get()\
-                                           .fb_last_query
-        return list(cls.objects.filter(owner=user.id,
-                                       time__gte=fb_last_query)\
-                               .order_by('time')\
-                               .values('page_name', 'message', 'time'))
-
-class TwitterMessage(models.Model):
-    text = models.TextField(default='')
-    created_at = models.DateTimeField(default=None)
     author = models.TextField(default='')
     owner = models.ForeignKey(User,
                               default=None)
     class Meta(object):
-        db_table = 'twitter_msg'
+        db_table = 'message'
 
     @classmethod
-    def get_tweets(cls, user):
-        twitter_last_query = UserProfile.objects.filter(user=user)\
+    def get_posts(cls, user):
+        last_query = UserProfile.objects.filter(user=user)\
                                         .get()\
-                                        .twitter_last_query
+                                        .last_query
         return list(cls.objects.filter(owner=user.id,
-                                       created_at__gte=twitter_last_query)\
-                               .order_by('created_at')\
-                               .values('author', 'text', 'created_at'))
+                                       time__gte=last_query)\
+                               .order_by('time')\
+                               .values('author', 'message',
+                                       'time', 'category'))
+
+    @classmethod
+    def get_offset_posts(cls, user, offset):
+        return list(cls.objects.filter(owner=user.id)\
+                               .order_by('time')\
+                               .values('author', 'message',
+                                       'time', 'category'))[offset:offset+10]
