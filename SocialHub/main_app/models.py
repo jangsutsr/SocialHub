@@ -44,12 +44,22 @@ class UserProfile(models.Model):
         cls.objects.filter(user=user.id)\
                    .update(last_query=timezone.now())
 
+class Friend(models.Model):
+    friendee = models.ForeignKey(User,
+                                 on_delete=models.CASCADE)
+    name = models.CharField(max_length=30,
+                            default='')
+
+    class Meta(object):
+        db_table = 'friend'
+
 class Message(models.Model):
     category = models.CharField(max_length=30,
                                 default='')
     message = models.TextField(default='')
     time = models.DateTimeField(default=None)
-    author = models.TextField(default='')
+    author = models.ForeignKey(Friend,
+                               on_delete=models.CASCADE)
     owner = models.ForeignKey(User,
                               default=None)
     class Meta(object):
@@ -63,12 +73,12 @@ class Message(models.Model):
         return list(cls.objects.filter(owner=user.id,
                                        time__gte=last_query)\
                                .order_by('time')\
-                               .values('author', 'message',
+                               .values('author__name', 'message',
                                        'time', 'category'))
 
     @classmethod
     def get_offset_posts(cls, user, offset):
         return list(cls.objects.filter(owner=user.id)\
                                .order_by('time')\
-                               .values('author', 'message',
+                               .values('author__name', 'message',
                                        'time', 'category'))[offset:offset+10]

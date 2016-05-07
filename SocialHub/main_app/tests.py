@@ -2,7 +2,7 @@
 from django.test import TestCase, Client
 from django.contrib.auth.models import User
 import datetime
-from .models import Message, UserProfile
+from .models import Message, UserProfile, Friend
 from time import sleep
 
 class MsgTestCase(TestCase):
@@ -12,28 +12,32 @@ class MsgTestCase(TestCase):
     def _store_dummy_msg(self, username='name'):
         user = User.objects.filter(username=username)\
                            .get()
+        fb_friend = Friend.objects.create(friendee=user,
+                                          name='暴力膜')
+        twitter_friend = Friend.objects.create(friendee=user,
+                                          name='膜法师')
         Message.objects.create(message='heheh',
                                time=datetime.datetime.utcnow()
                                         + datetime.timedelta(2),
-                               author='haha',
+                               author=twitter_friend,
                                owner=user,
                                category='twitter')
-        Message.objects.create(message=unicode('呵呵你一脸～', 'utf8'),
+        Message.objects.create(message='呵呵你一脸～',
                                time=datetime.datetime.utcnow()
                                         + datetime.timedelta(1),
-                               author='yes',
+                               author=twitter_friend,
                                owner=user,
                                category='twitter')
         Message.objects.create(message='蛤蛤蛤',
                                time=datetime.datetime.utcnow()
                                     + datetime.timedelta(2),
-                               author='暴力膜',
+                               author=fb_friend,
                                owner=user,
                                category='facebook')
         Message.objects.create(message='exciting',
                                time=datetime.datetime.utcnow()
                                     + datetime.timedelta(1),
-                               author='膜法师',
+                               author=fb_friend,
                                owner=user,
                                category='facebook')
 
