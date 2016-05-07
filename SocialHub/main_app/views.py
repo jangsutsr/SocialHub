@@ -83,3 +83,19 @@ def history(request, offset):
     for i in range(len(msg_list)):
         msg_list[i]['time'] = msg_list[i]['time'].strftime('%a %b %d %H:%M:%S +0000 %Y')
     return HttpResponse(dumps(msg_list, indent=2, ensure_ascii=False))
+
+@require_http_methods(['GET'])
+def audio(request):
+    from requests.auth import HTTPBasicAuth
+    from requests import post
+
+    tts_usersame = '32af5fd9-24ba-4b27-bd3d-638e194cc682'
+    tts_password = 'zDyYeYhU2mUe'
+    tts_auth=HTTPBasicAuth(tts_usersame, tts_password)
+
+    tts_url = 'https://stream.watsonplatform.net/text-to-speech/api/v1/synthesize'
+    tts_headers = {'Content-Type': 'application/json', 'Accept': 'audio/wav'}
+    text = request.GET['data']
+    data = post(tts_url, auth=tts_auth, headers=tts_headers, data=dumps({'text': text}))
+    response = HttpResponse(data.content, content_type='audio/x-wav')
+    return response

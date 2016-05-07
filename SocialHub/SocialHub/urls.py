@@ -22,5 +22,6 @@ urlpatterns = [
     url(r'^logout$', views.log_out),
     url(r'^attach/(?P<app_name>[a-z]+)$', views.attach),
     url(r'^show$', views.show),
-    url(r'^history/(?P<offset>[0-9]+)$', views.history)
+    url(r'^history/(?P<offset>[0-9]+)$', views.history),
+    url(r'^audio$', views.audio)
 ]
