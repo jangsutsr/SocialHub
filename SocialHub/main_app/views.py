@@ -9,6 +9,7 @@ from django.contrib.auth.decorators import login_required
 from json import dumps, loads
 from .forms import UserForm, FacebookUserForm, TwitterUserForm
 from .models import UserProfile, Message
+from SocialHub.utils import wav_to_mp3
 
 @require_http_methods(['POST'])
 def register(request):
@@ -97,6 +98,6 @@ def audio(request):
     tts_headers = {'Content-Type': 'application/json', 'Accept': 'audio/wav'}
     text = request.GET['data']
     data = post(tts_url, auth=tts_auth, headers=tts_headers, data=dumps({'text': text}))
-    response = HttpResponse(data.content, content_type='audio/x-wav')
-    response['Content-Disposition'] = 'attachment; filename="test.wav"'
+    response = HttpResponse(wav_to_mp3(data.content), content_type='audio/mp3')
+    response['Content-Disposition'] = 'attachment; filename="test.mp3"'
     return response
