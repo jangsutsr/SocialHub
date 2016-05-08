@@ -41,28 +41,87 @@ angular.module('starter.controllers', [])
   };
 })
 
-.controller('PlaylistsCtrl', function($scope, $http, $cordovaMedia, $ionicLoading, $location) {
+.controller('PlaylistsCtrl', function($scope, $http, $cordovaMedia, $ionicLoading, $location, pass) {
+    //$http.get("http://dyn-160-39-203-93.dyn.columbia.edu:9090/show")
     $http.get("http://127.0.0.1:5000/surround")
       .then(function(response) {
-          t = response.data;
+          posts = response.data;
           $scope.playlists = [
-            { title: 'Reggae', id: 1 },
-            { title: 'Chill', id: 2 },
-            { title: 'Dubstep', id: 3 },
-            { title: 'Indie', id: 4 },
-            { title: 'Rap', id: 5 },
-            { title: 'Cowbell', id: 6 },
-            { title: t, id: 7 }
+           { author: 'Reggae', text: 1 },
+           { author: 'Chill', text: 2 },
+           { author: 'Dubstep', text: 3 },
+           { author: 'Indie', text: 4 },
+           { author: 'Rap', text: 5 },
+           { author: 'Cowbell', text: 6 },
+           { author: posts, text: 7 }
           ];
+          //$scope.playlists = posts;
+
     });
 
     $scope.play = function(src) {
-        var media = new Media(src, null, null, mediaStatusCallback);
-        $cordovaMedia.play(media);
+      url = "http://ec2-54-173-9-169.compute-1.amazonaws.com:9090/audio"+"?data="+src;
+
+var fileTransfer = new FileTransfer();
+var uri = encodeURI("http://ec2-54-173-9-169.compute-1.amazonaws.com:9090/audio"+"?data="+src);
+//var fileURL = "cdvfile://localhost/persistent/path/to/downloads/tttaaaqqq.wav";
+var fileURL = "cdvfile://localhost/temporary/" + "a.wav"
+
+fileTransfer.download(
+    uri,
+    fileURL,
+    function(entry) {
+        console.log("download complete: " + entry.toURL());
+          var media = new Media("mp3/now.mp3", null, null, mediaStatusCallback);
+          $cordovaMedia.play(media);
+    },
+    function(error) {
+        console.log("download error source " + error.source);
+        console.log("download error target " + error.target);
+        console.log("upload error code" + error.code);
+    },
+    false,
+    {
+        headers: {
+            "Authorization": "Basic dGVzdHVzZXJuYW1lOnRlc3RwYXNzd29yZA=="
+        }
+    }
+);
+
+
+
+
+//       $http.get(url)
+//         .then(function(response) {
+//           console.log(response.attachment);
+
+// var filePath = cordova.file.dataDirectory + 'test.wav'
+//           var fileContent = new Blob([response.data], { type : 'audio/x-wav' })
+// var options = {}
+
+// $cordovaFile.writeFile(filePath, fileContent, options).then(function (result) {
+//   console.log(result)
+// }, function (err) {
+//   console.error(err) // FileError { code: 5 }
+// })
+//         $cordovaFile.writeFile(cordova.file.dataDirectory, "aaa.wav", fileContent, true)
+//         .then(function (success) {
+//           console.log("aaa");
+//         }, function (error) {
+//           console.log(error);
+//         });
+
+//          // var media = new Media(src, null, null, mediaStatusCallback);
+//          // $cordovaMedia.play(media);
+//         });
+
+
+
     }
 
-    $scope.detail = function(id) {
-        $location.path('/app/playlists/'+id);
+    $scope.detail = function(obj) {
+        $location.path('/app/playlists/'+obj.text);
+        pass.set(obj);
     }
  
     var mediaStatusCallback = function(status) {
@@ -74,5 +133,15 @@ angular.module('starter.controllers', [])
     }
 })
 
-.controller('PlaylistCtrl', function($scope, $stateParams) {
+.controller('PlaylistCtrl', function($scope, $stateParams, pass) {
+    console.log(pass.get().text);
+    $scope.obj = pass.get();
 });
+
+document.addEventListener("deviceready", onDeviceReady, false);
+function onDeviceReady() {
+    console.log(FileTransfer);
+    console.log("asdkjfkdsskfksfkjkj");
+}
+
+

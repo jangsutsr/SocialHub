@@ -21,7 +21,6 @@ angular.module('starter', ['ionic', 'starter.controllers', 'ngCordova'])
     }
   });
 })
-
 .config(function($stateProvider, $urlRouterProvider, $httpProvider) {
 
   $httpProvider.defaults.useXDomain = true;
@@ -39,11 +38,12 @@ angular.module('starter', ['ionic', 'starter.controllers', 'ngCordova'])
     controller: 'AppCtrl'
   })
 
-  .state('app.search', {
-    url: '/search',
+  .state('app.history', {
+    url: '/history',
     views: {
       'menuContent': {
-        templateUrl: 'templates/search.html'
+        templateUrl: 'templates/history.html',
+          controller: 'PlaylistsCtrl'
       }
     }
   })
@@ -77,4 +77,14 @@ angular.module('starter', ['ionic', 'starter.controllers', 'ngCordova'])
   });
   // if none of the above states are matched, use this as the fallback
   $urlRouterProvider.otherwise('/app/playlists');
+})
+.service('pass', function() {
+    
+  var value;
+  this.set = function(input) {
+      value=input
+  }
+  this.get = function() {
+      return value;
+  }
 });
