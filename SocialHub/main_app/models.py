@@ -10,9 +10,12 @@ class UserProfile(models.Model):
     fb_name = models.CharField(max_length=30,
                                default='')
     fb_token = models.TextField(default='')
+    fb_id = models.TextField(default='')
     twitter_name = models.CharField(max_length=30,
                                     default='')
-    twitter_token = models.TextField(default='')
+    resource_owner_key = models.TextField(default='')
+    resource_owner_secret = models.TextField(default='')
+    twitter_id = models.TextField(default='')
     last_query = models.DateTimeField(null=True)
     last_fetch = models.DateTimeField(null=True)
 
@@ -28,6 +31,7 @@ class UserProfile(models.Model):
                            last_query=timezone.now(),
                            last_fetch=timezone.now())
 
+    # TODO
     @classmethod
     def insert_account(cls, form, user, cate):
         if cate == 1:
@@ -37,7 +41,7 @@ class UserProfile(models.Model):
         elif cate == 2:
             cls.objects.filter(user=user.id)\
                     .update(twitter_name=form['name'].data,
-                            twitter_token=form['passwd'].data)
+                            resource_owner_key=form['passwd'].data)
 
     @classmethod
     def update_query_time(cls, user):
@@ -49,6 +53,8 @@ class Friend(models.Model):
                                  on_delete=models.CASCADE)
     name = models.CharField(max_length=30,
                             default='')
+    category = models.CharField(max_length=30,
+                                default='')
 
     class Meta(object):
         db_table = 'friend'
