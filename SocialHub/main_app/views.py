@@ -97,6 +97,6 @@ def audio(request):
     tts_headers = {'Content-Type': 'application/json', 'Accept': 'audio/wav'}
     text = request.GET['data']
     data = post(tts_url, auth=tts_auth, headers=tts_headers, data=dumps({'text': text}))
-    #response = HttpResponse(data.content, content_type='audio/x-wav')
-    response = HttpResponse(data.content)
+    response = HttpResponse(data.content, content_type='audio/x-wav')
+    response['Content-Disposition'] = 'attachment; filename="test.wav"'
     return response
