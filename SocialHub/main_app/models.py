@@ -31,17 +31,19 @@ class UserProfile(models.Model):
                            last_query=timezone.now(),
                            last_fetch=timezone.now())
 
-    # TODO
     @classmethod
     def insert_account(cls, form, user, cate):
         if cate == 1:
             cls.objects.filter(user=user.id)\
                     .update(fb_name=form['name'].data,
-                            fb_token=form['passwd'].data)
+                            fb_token=form['token'].data,
+                            fb_id=form['identity'].data)
         elif cate == 2:
             cls.objects.filter(user=user.id)\
                     .update(twitter_name=form['name'].data,
-                            resource_owner_key=form['passwd'].data)
+                            twitter_id=form['identity'].data,
+                            resource_owner_key=form['key'].data,
+                            resource_owner_secret=form['secret'].data)
 
     @classmethod
     def update_query_time(cls, user):

@@ -4,8 +4,13 @@ class UserForm(forms.Form):
     name = forms.CharField()
     passwd = forms.CharField()
 
-class FacebookUserForm(UserForm):
-    pass
+class FacebookUserForm(forms.Form):
+    name = forms.CharField()
+    token = forms.CharField()
+    identity = forms.CharField()
 
-class TwitterUserForm(UserForm):
-    pass
+class TwitterUserForm(forms.Form):
+    name = forms.CharField()
+    identity = forms.CharField()
+    key = forms.CharField()
+    secret = forms.CharField()

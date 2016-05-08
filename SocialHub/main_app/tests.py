@@ -49,7 +49,9 @@ class MsgTestCase(TestCase):
         self.assertEqual('User exists.', response.content)
         self._store_dummy_msg()
         response = self.browser.post('/attach/twitter', {'name': 'hehe',
-                                                        'passwd': 'haha'})
+                                                         'identity': 'haha',
+                                                         'key': 'hoho',
+                                                         'secret': 'heihei'})
         self.assertEqual('twitter account attached', response.content)
         user = User.objects.filter(username='name')\
                            .get()
