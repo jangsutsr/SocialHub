@@ -98,5 +98,5 @@ def audio(request):
     text = request.GET['data']
     data = post(tts_url, auth=tts_auth, headers=tts_headers, data=dumps({'text': text}))
     #response = HttpResponse(data.content, content_type='audio/x-wav')
-    response = HttpResponse(data.content, content_type='audio/x-wav')
+    response = HttpResponse(data.content)
     return response
