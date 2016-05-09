@@ -3,6 +3,8 @@ from __future__ import unicode_literals
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
+from django.dispatch import receiver
+from django.db.models.signals import post_save
 
 class UserProfile(models.Model):
     user = models.ForeignKey(User,
@@ -25,11 +27,13 @@ class UserProfile(models.Model):
             ('user', ),
         )
 
-    @classmethod
-    def create_profile(cls, user):
-        cls.objects.create(user=user,
-                           last_query=timezone.now(),
-                           last_fetch=timezone.now())
+    @staticmethod
+    @receiver(post_save, sender=User)
+    def create_profile(sender, **kwargs):
+        if kwargs['created']:
+            UserProfile.objects.create(user=kwargs['instance'],
+                                       last_query=timezone.now(),
+                                       last_fetch=timezone.now())
 
     @classmethod
     def insert_account(cls, form, user, cate):

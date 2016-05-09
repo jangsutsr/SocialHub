@@ -41,7 +41,7 @@ class MsgTestCase(TestCase):
                                owner=user,
                                category='facebook')
 
-    def test_twitter_listing(self):
+    def test_listing(self):
         response = self.browser.post('/register', {'name': 'name',
                                                    'passwd': 'passwd'})
         response = self.browser.post('/login', {'name': 'name',
