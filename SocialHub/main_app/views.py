@@ -30,7 +30,7 @@ def register(request):
 @require_http_methods(['GET', 'POST'])
 def log_in(request):
     if request.method == 'GET':
-        info(response, 'Indicator')
+        info(request, 'Indicator')
     else:
         form = UserForm(request.POST)
         if form.is_valid():
@@ -49,7 +49,7 @@ def log_in(request):
 @login_required
 def log_out(request):
     logout(request)
-    info(response, 'Session deleted')
+    info(request, 'Session deleted')
     return HttpResponse(''.join([item.message for item in get_messages(request)]))
 
 @require_http_methods(['POST'])

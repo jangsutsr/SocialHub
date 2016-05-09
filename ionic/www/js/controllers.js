@@ -43,7 +43,7 @@ angular.module('starter.controllers', [])
 
 .controller('PlaylistsCtrl', function($scope, $http, $cordovaMedia, $ionicLoading, $location, pass) {
     //$http.get("http://dyn-160-39-203-93.dyn.columbia.edu:9090/show")
-    $http.get("http://127.0.0.1:5000/surround")
+    $http.get("http://127.0.0.1:8000/" + "login")
       .then(function(response) {
           posts = response.data;
           $scope.playlists = [
@@ -60,60 +60,60 @@ angular.module('starter.controllers', [])
     });
 
     $scope.play = function(src) {
-      url = "http://ec2-54-173-9-169.compute-1.amazonaws.com:9090/audio"+"?data="+src;
+      //url = "http://ec2-54-173-9-169.compute-1.amazonaws.com:9090/audio"+"?data="+src;
 
-var fileTransfer = new FileTransfer();
-var uri = encodeURI("http://ec2-54-173-9-169.compute-1.amazonaws.com:9090/audio"+"?data="+src);
-//var fileURL = "cdvfile://localhost/persistent/path/to/downloads/tttaaaqqq.wav";
-var fileURL = "cdvfile://localhost/temporary/" + "a.wav"
+    var fileTransfer = new FileTransfer();
+    var uri = encodeURI("http://127.0.0.1:8000/" + "audio"+"?data="+src);
+    //var fileURL = "cdvfile://localhost/persistent/path/to/downloads/tttaaaqqq.wav";
+    var fileURL = "cdvfile://localhost/temporary/" + "test.mp3"
 
-fileTransfer.download(
-    uri,
-    fileURL,
-    function(entry) {
-        console.log("download complete: " + entry.toURL());
-          var media = new Media("mp3/now.mp3", null, null, mediaStatusCallback);
-          $cordovaMedia.play(media);
-    },
-    function(error) {
-        console.log("download error source " + error.source);
-        console.log("download error target " + error.target);
-        console.log("upload error code" + error.code);
-    },
-    false,
-    {
-        headers: {
-            "Authorization": "Basic dGVzdHVzZXJuYW1lOnRlc3RwYXNzd29yZA=="
+    fileTransfer.download(
+        uri,
+        fileURL,
+        function(entry) {
+            console.log("download complete: " + entry.toURL());
+              var media = new Media("mp3/now.mp3", null, null, mediaStatusCallback);
+              $cordovaMedia.play(media);
+        },
+        function(error) {
+            console.log("download error source " + error.source);
+            console.log("download error target " + error.target);
+            console.log("upload error code" + error.code);
+        },
+        false,
+        {
+            headers: {
+                "Authorization": "Basic dGVzdHVzZXJuYW1lOnRlc3RwYXNzd29yZA=="
+            }
         }
-    }
-);
+    );
 
 
 
 
-//       $http.get(url)
-//         .then(function(response) {
-//           console.log(response.attachment);
+    //       $http.get(url)
+    //         .then(function(response) {
+    //           console.log(response.attachment);
 
-// var filePath = cordova.file.dataDirectory + 'test.wav'
-//           var fileContent = new Blob([response.data], { type : 'audio/x-wav' })
-// var options = {}
+    // var filePath = cordova.file.dataDirectory + 'test.wav'
+    //           var fileContent = new Blob([response.data], { type : 'audio/x-wav' })
+    // var options = {}
 
-// $cordovaFile.writeFile(filePath, fileContent, options).then(function (result) {
-//   console.log(result)
-// }, function (err) {
-//   console.error(err) // FileError { code: 5 }
-// })
-//         $cordovaFile.writeFile(cordova.file.dataDirectory, "aaa.wav", fileContent, true)
-//         .then(function (success) {
-//           console.log("aaa");
-//         }, function (error) {
-//           console.log(error);
-//         });
+    // $cordovaFile.writeFile(filePath, fileContent, options).then(function (result) {
+    //   console.log(result)
+    // }, function (err) {
+    //   console.error(err) // FileError { code: 5 }
+    // })
+    //         $cordovaFile.writeFile(cordova.file.dataDirectory, "aaa.wav", fileContent, true)
+    //         .then(function (success) {
+    //           console.log("aaa");
+    //         }, function (error) {
+    //           console.log(error);
+    //         });
 
-//          // var media = new Media(src, null, null, mediaStatusCallback);
-//          // $cordovaMedia.play(media);
-//         });
+    //          // var media = new Media(src, null, null, mediaStatusCallback);
+    //          // $cordovaMedia.play(media);
+    //         });
 
 
 
