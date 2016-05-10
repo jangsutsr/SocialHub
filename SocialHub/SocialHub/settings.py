@@ -79,10 +79,10 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'OPTIONS': {
             'read_default_file': os.path.join(BASE_DIR, 'db_user.cnf'),
-            'charset': 'utf8mb4'
+            'charset': 'utf8'
         },
         'TEST': {
-            'CHARSET': 'utf8mb4'
+            'CHARSET': 'utf8'
         }
     }
 }
