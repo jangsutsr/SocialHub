@@ -51,7 +51,7 @@ class MsgTestCase(TestCase):
         response = self.browser.post('/login', {'name': 'name',
                                                 'passwd': 'passwd'})
         self.assertEqual('User exists.', response.content)
-        #self._store_dummy_msg()
+        self._store_dummy_msg()
         response = self.browser.post('/attach/twitter', {'name': 'hehe',
                                                          'identity': 'haha',
                                                          'key': 'hoho',

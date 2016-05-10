@@ -19,7 +19,6 @@ def register(request):
         try:
             user = User.objects.create_user(form.cleaned_data['name'],
                                             password=form.cleaned_data['passwd'])
-            #UserProfile.create_profile(user)
             success(request, 'Successfully create user.')
         except IntegrityError:
             error(request, 'User name exists.')
