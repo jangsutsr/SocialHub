@@ -18,8 +18,8 @@ class UserProfile(models.Model):
     resource_owner_key = models.TextField(default='')
     resource_owner_secret = models.TextField(default='')
     twitter_id = models.TextField(default='')
-    last_query = models.DateTimeField(null=True)
-    last_fetch = models.DateTimeField(null=True)
+    last_query = models.DateTimeField(default=None)
+    last_fetch = models.DateTimeField(default=None)
 
     class Meta(object):
         db_table = 'user_profile'
