@@ -92,6 +92,7 @@ class Message(models.Model):
         last_query = UserProfile.objects.filter(user=user)\
                                         .get()\
                                         .last_query
+        print last_query
         return list(cls.objects.filter(owner=user.id,
                                        time__gte=last_query)\
                                .order_by('time')\
