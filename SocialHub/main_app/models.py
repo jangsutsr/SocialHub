@@ -39,15 +39,15 @@ class UserProfile(models.Model):
     def insert_account(cls, form, user, cate):
         if cate == 1:
             cls.objects.filter(user=user.id)\
-                    .update(fb_name=form['name'].data,
-                            fb_token=form['token'].data,
-                            fb_id=form['identity'].data)
+                    .update(fb_name=form.cleaned_data['name'],
+                            fb_token=form.cleaned_data['token'],
+                            fb_id=form.cleaned_data['identity'])
         elif cate == 2:
             cls.objects.filter(user=user.id)\
-                    .update(twitter_name=form['name'].data,
-                            twitter_id=form['identity'].data,
-                            resource_owner_key=form['key'].data,
-                            resource_owner_secret=form['secret'].data)
+                    .update(twitter_name=form.cleaned_data['name'],
+                            twitter_id=form.cleaned_data['identity'],
+                            resource_owner_key=form.cleaned_data['key'],
+                            resource_owner_secret=form.cleaned_data['secret'])
 
     @classmethod
     def update_query_time(cls, user):
@@ -61,9 +61,14 @@ class Friend(models.Model):
                             default='')
     category = models.CharField(max_length=30,
                                 default='')
+    social_id = models.CharField(max_length=100,
+                                 null=True)
 
     class Meta(object):
         db_table = 'friend'
+        unique_together = (
+            ('category', 'social_id'),
+        )
 
 class Message(models.Model):
     category = models.CharField(max_length=30,
@@ -74,8 +79,13 @@ class Message(models.Model):
                                on_delete=models.CASCADE)
     owner = models.ForeignKey(User,
                               default=None)
+    social_id = models.CharField(max_length=100,
+                                 null=True)
     class Meta(object):
         db_table = 'message'
+        unique_together = (
+            ('category', 'social_id'),
+        )
 
     @classmethod
     def get_posts(cls, user):

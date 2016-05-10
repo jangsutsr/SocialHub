@@ -17,8 +17,8 @@ def register(request):
     form = UserForm(request.POST)
     if form.is_valid():
         try:
-            user = User.objects.create_user(form['name'].data,
-                                            password=form['passwd'].data)
+            user = User.objects.create_user(form.cleaned_data['name'],
+                                            password=form.cleaned_data['passwd'])
             #UserProfile.create_profile(user)
             success(request, 'Successfully create user.')
         except IntegrityError:
@@ -34,8 +34,8 @@ def log_in(request):
     else:
         form = UserForm(request.POST)
         if form.is_valid():
-            user = authenticate(username=form['name'].data,
-                                password=form['passwd'].data)
+            user = authenticate(username=form.cleaned_data['name'],
+                                password=form.cleaned_data['passwd'])
             if user != None:
                 login(request, user)
                 success(request, 'User exists.')

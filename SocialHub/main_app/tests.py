@@ -21,25 +21,29 @@ class MsgTestCase(TestCase):
                                         + datetime.timedelta(2),
                                author=twitter_friend,
                                owner=user,
-                               category='twitter')
+                               category='twitter',
+                               social_id='123')
         Message.objects.create(message='呵呵你一脸～',
                                time=datetime.datetime.utcnow()
                                         + datetime.timedelta(1),
                                author=twitter_friend,
                                owner=user,
-                               category='twitter')
+                               category='twitter',
+                               social_id='456')
         Message.objects.create(message='蛤蛤蛤',
                                time=datetime.datetime.utcnow()
                                     + datetime.timedelta(2),
                                author=fb_friend,
                                owner=user,
-                               category='facebook')
+                               category='facebook',
+                               social_id='123')
         Message.objects.create(message='exciting',
                                time=datetime.datetime.utcnow()
                                     + datetime.timedelta(1),
                                author=fb_friend,
                                owner=user,
-                               category='facebook')
+                               category='facebook',
+                               social_id='456')
 
     def test_listing(self):
         response = self.browser.post('/register', {'name': 'name',
