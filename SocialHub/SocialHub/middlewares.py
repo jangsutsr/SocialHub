@@ -6,6 +6,7 @@ class CorsMiddleware(object):
             response = HttpResponse(content_type='text/plain')
             response['Access-Control-Allow-Methods'] = 'POST, GET, OPTIONS'
             response['Access-Control-Allow-Origin'] = 'http://0.0.0.0:8100'
+            response['Access-Control-Allow-Headers'] = 'X-PINGOTHER, Content-Type'
             return response
 
     def process_response(self, request, response):
