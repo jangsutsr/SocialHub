@@ -1,4 +1,5 @@
 from django.http import HttpResponse
+from json import loads
 
 class CorsMiddleware(object):
     def process_request(self, request):
@@ -15,3 +16,14 @@ class CorsMiddleware(object):
         if response['Content-Type'] == 'text/html; charset=utf-8':
             response['Content-Type'] = 'text/plain; charset=utf-8'
         return response
+
+class JsonToQueryMiddleware(object):
+    def process_request(self, request):
+        if request.META.get('HTTP_ACCEPT', None) == 'application/json':
+            try:
+                form = loads(request.body)
+                for key, value in form.iteritems():
+                    request.POST[key] = value
+                    request.GET[key] = value
+            except Exception:
+                pass
