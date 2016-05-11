@@ -23,6 +23,7 @@ def register(request):
             success(request, 'Successfully create user.')
         except IntegrityError:
             error(request, 'User name exists.')
+            response.status_code = 400
     else:
         error(request, 'Invalid input data')
         response.status_code = 400
@@ -44,6 +45,7 @@ def log_in(request):
                 success(request, 'User exists.')
             else:
                 error(request, 'User does not exist.')
+                response.status_code = 400
         else:
             error(request, 'Invalid input data')
             response.status_code = 400
@@ -79,6 +81,7 @@ def attach(request, app_name):
             response.status_code = 400
     else:
         error(request, 'Unsupported social network')
+        response.status_code = 400
     response.write(''.join([item.message for item in get_messages(request)]))
     return response
 
