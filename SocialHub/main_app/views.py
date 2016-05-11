@@ -15,6 +15,7 @@ from SocialHub.utils import wav_to_mp3
 @require_http_methods(['POST'])
 def register(request):
     form = UserForm(request.POST)
+    response = HttpResponse()
     if form.is_valid():
         try:
             user = User.objects.create_user(form.cleaned_data['name'],
@@ -24,10 +25,13 @@ def register(request):
             error(request, 'User name exists.')
     else:
         error(request, 'Invalid input data')
-    return HttpResponse(''.join([item.message for item in get_messages(request)]))
+        response.status_code = 400
+    response.write(''.join([item.message for item in get_messages(request)]))
+    return response
 
 @require_http_methods(['GET', 'POST'])
 def log_in(request):
+    response = HttpResponse()
     if request.method == 'GET':
         info(request, 'Indicator')
     else:
@@ -42,7 +46,9 @@ def log_in(request):
                 error(request, 'User does not exist.')
         else:
             error(request, 'Invalid input data')
-    return HttpResponse(''.join([item.message for item in get_messages(request)]))
+            response.status_code = 400
+    response.write(''.join([item.message for item in get_messages(request)]))
+    return response
 
 @require_http_methods(['GET'])
 @login_required
@@ -54,6 +60,7 @@ def log_out(request):
 @require_http_methods(['POST'])
 @login_required
 def attach(request, app_name):
+    response = HttpResponse()
     if app_name == 'facebook':
         form = FacebookUserForm(request.POST)
         if form.is_valid():
@@ -61,6 +68,7 @@ def attach(request, app_name):
             success(request, 'facebook account attached')
         else:
             error(request, 'Invalid input data')
+            response.status_code = 400
     elif app_name == 'twitter':
         form = TwitterUserForm(request.POST)
         if form.is_valid():
@@ -68,9 +76,12 @@ def attach(request, app_name):
             success(request, 'twitter account attached')
         else:
             error(request, 'Invalid input data')
+            response.status_code = 400
     else:
         error(request, 'Unsupported social network')
-    return HttpResponse(''.join([item.message for item in get_messages(request)]))
+    response.write(''.join([item.message for item in get_messages(request)]))
+    return response
+
 
 @require_http_methods(['GET'])
 @login_required

@@ -19,11 +19,13 @@ class CorsMiddleware(object):
 
 class JsonToQueryMiddleware(object):
     def process_request(self, request):
-        if request.META.get('HTTP_ACCEPT', None) == 'application/json':
+        if request.method == 'POST' and \
+            request.META.get('HTTP_ACCEPT', None) == 'application/json':
             try:
+                post = request.POST.copy()
                 form = loads(request.body)
                 for key, value in form.iteritems():
-                    request.POST[key] = value
-                    request.GET[key] = value
+                    post[key] = value
+                request.POST = post
             except Exception:
                 pass
