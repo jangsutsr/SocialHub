@@ -1,6 +1,28 @@
-<ion-view view-title="Browse">
+<ion-view view-title="Profile">
   <ion-content>
-    <h1>Profile</h1>
-    <button class="button button-block button-positive" ng-click="TwitterAttach()">Twitter</button>
+    <h2 style="padding:15px;padding-bottom: 0px;margin-bottom: 0px">Kevin</h2>
+
+    <img class="col center" src="img/25.pic.jpg" style="width: 150px;height: 150px;padding-bottom:10px">
+    <div class="list">
+	  <div class="item item-divider">
+	    Attached Social Network
+	  </div>	
+
+	  <div class="item item-button-right">
+	  	Twitter
+	    <button class="button button-calm" ng-click="TwitterAttach()">
+	      <i class="icon ion-social-twitter"></i>
+	    </button>
+	  </div>
+
+	  <div class="item item-button-right">
+	  	Facebook
+	    <button class="button button-positive" style="width: 48px">
+	      <i class="icon ion-social-facebook center"></i>
+	    </button>
+	  </div>
+    </div>
+
+    
   </ion-content>
 </ion-view>

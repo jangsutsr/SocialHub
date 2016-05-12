@@ -2,17 +2,29 @@
   <ion-content>
   	<ion-list>
 
+    <button class="button button-block button-positive" ng-click="count()">Update</button>
+    <label>Twitter Friends
 	  <ul class="list">
-	    <li class="item item-checkbox" ng-repeat='item in myList | filter: search'>
-	  <label class="checkbox">
-	   <input type="checkbox" ng-model="item.selected">
-	  </label>
+	    <li class="item item-checkbox" ng-repeat='item in ttlist'>
+		  <label class="checkbox">
+		   <input type="checkbox" ng-model="item.selected" ng-checked='!item.is_favorite'>
+		  </label>
 	       <p ng-bind-html="item.name"></p>
-
 	    </li>
-	    <ul>
+	  <ul>
+	</label>
 
-    <button class="button button-block button-positive" ng-click="count()">Twitter</button>
+    <label>Facebook Friends
+	  <ul class="list">
+	    <li class="item item-checkbox" ng-repeat='item in fblist'>
+		  <label class="checkbox">
+		   <input type="checkbox" ng-model="item.selected" ng-checked='!item.is_favorite'>
+		  </label>
+	       <p ng-bind-html="item.name"></p>
+	    </li>
+	  <ul>
+	</label>
+
 	</ion-list>
   </ion-content>
 </ion-view>

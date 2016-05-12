@@ -1,20 +1,19 @@
-<ion-view view-title="Playlists">
+<ion-view view-title="All Posts">
   <ion-content>
-    <div class="row" style="padding-bottom: 0px;">
-      <div class="col col-80" style="padding-bottom: 0px;padding-top: 0px">
-  	     <input type="text" ng-model="test" placeholder="Filter" style="width: 100%;padding: 10px">
-      </div>
-      <div class="col" style="padding-bottom: 0px;padding-top: 0px">
-        <select>
-          <option selected></option>
-          <option>Blue</option>
-          <option>Green</option>
-          <option>Red</option>
-        </select>
-      </div>
+    <div class="list list-inset" style="margin: 0px">
+      <label class="item-input" style="padding-left:5px">
+        <i class="icon ion-search placeholder-icon"></i>
+        <input type="text" placeholder="Search" style="padding-right: 0px" ng-model="test" >
+      </label>
     </div>
+
+
+   <select ng-model="cate" ng-options="c.name for c in options">
+      <option name="">category</option>
+    </select>
+
     <ion-list>
-      <ion-item ng-repeat="playlist in playlists | filter : test" style="padding: 5px">
+      <ion-item ng-repeat="playlist in playlists | filter: test | filter: {author__tag:cate.name}" style="padding: 5px">
         <div class="row">
 	      	<div class="col col-75" ng-click="detail({{playlist}})">
 	      		<p>{{playlist.author__name}}</p>

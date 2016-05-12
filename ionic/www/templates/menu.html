@@ -21,17 +21,23 @@
         <ion-item menu-close ng-click="login()" ng-hide="IsLoggedIn">
           Login
         </ion-item>
-        <ion-item menu-close href="#/app/profile" ng-hide="IsLoggedIn">
+        <ion-item menu-close href="#/app/profile" ng-show="IsLoggedIn">
           Profile
         </ion-item>
         <ion-item menu-close href="#/app/newpost">
-          New Post
+          New Arrival
+        </ion-item>
+        <ion-item menu-close href="#/app/playlists">
+          All Posts
+        </ion-item>
+        <ion-item menu-close href="#/app/interest">
+          Interested
         </ion-item>
         <ion-item menu-close href="#/app/friends">
           FavoFriends
         </ion-item>
-        <ion-item menu-close href="#/app/playlists">
-          Playlists
+        <ion-item menu-close ng-click="logout()" ng-show="IsLoggedIn">
+          Logout
         </ion-item>
       </ion-list>
     </ion-content>
