@@ -36,6 +36,12 @@ class UserProfile(models.Model):
                                        last_fetch=timezone.now())
 
     @classmethod
+    def insert_twitter_token(cls, query_form, user):
+        cls.objects.filter(user=user.id)\
+                   .update(resource_owner_key=query_form['oauth_token'],
+                           resource_owner_secret=query_form['oauth_token_secret'])
+
+    @classmethod
     def insert_account(cls, form, user, cate):
         if cate == 1:
             cls.objects.filter(user=user.id)\

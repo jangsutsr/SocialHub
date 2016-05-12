@@ -10,7 +10,5 @@ class FacebookUserForm(forms.Form):
     identity = forms.CharField()
 
 class TwitterUserForm(forms.Form):
-    name = forms.CharField()
-    identity = forms.CharField()
-    key = forms.CharField()
-    secret = forms.CharField()
+    oauth_token = forms.CharField()
+    oauth_token_secret = forms.CharField()

@@ -7,10 +7,17 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.messages import info, success, error, get_messages
+from django.http import QueryDict
+
+import requests
+from requests_oauthlib import OAuth1
 from json import dumps
 from .forms import UserForm, FacebookUserForm, TwitterUserForm
 from .models import UserProfile, Message
 from SocialHub.utils import wav_to_mp3
+
+client_key = '1VjKOBZr4k8cRycT05PNyXj2i'
+client_secret = 'QIIfKQjaGYdBZB1jL1lzGRgNFXCfk87AyyLr8uliHuPLFsYKSo'
 
 @require_http_methods(['POST'])
 def register(request):
@@ -59,12 +66,12 @@ def log_out(request):
     info(request, 'Session deleted')
     return HttpResponse(''.join([item.message for item in get_messages(request)]))
 
-@require_http_methods(['POST'])
-@login_required
+@require_http_methods(['GET'])
+#@login_required
 def attach(request, app_name):
     response = HttpResponse()
     if app_name == 'facebook':
-        form = FacebookUserForm(request.POST)
+        form = FacebookUserForm(request.GET)
         if form.is_valid():
             UserProfile.insert_account(form, request.user, 1)
             success(request, 'facebook account attached')
@@ -72,19 +79,25 @@ def attach(request, app_name):
             error(request, 'Invalid input data')
             response.status_code = 400
     elif app_name == 'twitter':
-        form = TwitterUserForm(request.POST)
-        if form.is_valid():
-            UserProfile.insert_account(form, request.user, 2)
-            success(request, 'twitter account attached')
-        else:
-            error(request, 'Invalid input data')
-            response.status_code = 400
+        request_token_url = 'https://api.twitter.com/oauth/request_token'
+        oauth = OAuth1(client_key,
+                       client_secret=client_secret)
+        r = requests.post(url=request_token_url,
+                          auth=oauth,
+                          data={'oauth_callback': 'http://ec2-54-173-9-169.compute-1.amazonaws.com:9090/twitter'})
+        twitter_query = QueryDict(r.content)
+        UserProfile.insert_twitter_token(twitter_query, request.user)
+        return HttpResponse(twitter_query['oauth_token'])
     else:
         error(request, 'Unsupported social network')
         response.status_code = 400
     response.write(''.join([item.message for item in get_messages(request)]))
     return response
 
+@require_http_methods(['GET'])
+def twitter(request):
+    print request.body
+    return HttpResponse(request.body)
 
 @require_http_methods(['GET'])
 @login_required
