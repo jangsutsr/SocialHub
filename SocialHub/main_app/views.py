@@ -140,9 +140,7 @@ def history(request, offset):
 @login_required
 def friends(request):
     if request.method == 'POST':
-        to_update = loads(request.body)
-        for item in to_update:
-            Friend.update_favorite(request.user, item)
+        Friend.update_favorite(request.user, loads(request.body))
     return JsonResponse(Friend.get_friends(request.user),
                         safe=False,
                         json_dumps_params={'indent': 2,

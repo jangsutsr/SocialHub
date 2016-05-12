@@ -92,11 +92,13 @@ class Friend(models.Model):
                                'img', 'tag'))
 
     @classmethod
-    def update_favorite(cls, user, user_info):
-        cls.objects.filter(friendee=user,
-                           category=user_info['category'],
-                           social_id=user_info['social_id'])\
-                   .update(is_favorite=0)
+    def update_favorite(cls, user, to_update):
+        cls.objects.all().update(is_favorite=1)
+        for item in to_update:
+            cls.objects.filter(friendee=user,
+                               category=item['category'],
+                               social_id=item['social_id'])\
+                       .update(is_favorite=0)
 
 class Message(models.Model):
     category = models.CharField(max_length=30,
