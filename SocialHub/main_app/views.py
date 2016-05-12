@@ -112,7 +112,16 @@ def attach(request, app_name):
 
     If a twitter account is to be attached, the incoming request is simply an
     indicator. This function then call twitter request_token api to ask for a
-    temporary
+    temporary twitter token and twitter secret token, save it to database and
+    send back to the client.
+
+    Args:
+        request: Incoming request.
+        app_name: The name of social network to be attached.
+
+    Returns:
+        Token string if twitter token is successfully received. Error message
+        if network is not supported.
     '''
     response = HttpResponse()
     if app_name == 'facebook':
@@ -135,7 +144,18 @@ def attach(request, app_name):
 
 @require_http_methods(['GET'])
 def twitter(request):
-    '''View function that
+    '''View function that communicate with twitter api.
+
+    This function extracts OAuth verifier from the incoming request and combine
+    it with prestored twitter token and secret to ask for twitter authentication
+    info. After receiving authentication info it opens up a daemon thread to
+    initialize twitter friend and messages.
+
+    Args:
+        request: Incoming request.
+
+    Returns:
+        Nothing since there is nothing to inform twitter api.
     '''
     access_token_url = 'https://api.twitter.com/oauth/access_token'
     oauth_token_secret = UserProfile.objects\
@@ -161,6 +181,17 @@ def twitter(request):
 @require_http_methods(['GET'])
 @login_required
 def show(request):
+    '''View function that returns messages to be displayed.
+
+    This function extracts the latest 50 messages since the last query time
+    and updates the query time.
+
+    Args:
+        request: Incoming request.
+
+    Returns:
+        A json-styled list of message info.
+    '''
     msg_list = Message.get_posts(request.user)
     UserProfile.update_query_time(request.user)
     for i in range(len(msg_list)):
@@ -173,6 +204,17 @@ def show(request):
 @require_http_methods(['GET'])
 @login_required
 def history(request, offset):
+    '''View function that returns messages starting from an offset.
+
+    This function extracts the latest 50 messages since the last query time
+    and updates the query time.
+
+    Args:
+        request: Incoming request.
+
+    Returns:
+        A json-styled list of message info.
+    '''
     msg_list = Message.get_offset_posts(request.user, int(offset))
     for i in range(len(msg_list)):
         msg_list[i]['time'] = msg_list[i]['time'].strftime('%a %b %d %H:%M:%S +0000 %Y')
@@ -184,6 +226,18 @@ def history(request, offset):
 @require_http_methods(['GET', 'POST'])
 @login_required
 def friends(request):
+    '''View function that display friend list or update favorite info.
+
+    When the request method is GET, simply send out a json-styled list of all
+    friend info; When method is POST, update favorite info according to json
+    in the request body.
+
+    Args:
+        request: Incoming request.
+
+    Returns:
+        A json-styled list of all friend info.
+    '''
     if request.method == 'POST':
         Friend.update_favorite(request.user, loads(request.body))
     return JsonResponse(Friend.get_friends(request.user),
@@ -194,6 +248,17 @@ def friends(request):
 @require_http_methods(['GET'])
 @login_required
 def favorite(request, offset):
+    '''View function for sending favorite's messages.
+
+    Instead of sending an offsetted list of messages, send list of only those
+    from favorite friends.
+
+    Args:
+        request: Incoming request.
+
+    Returns:
+        A json-styled list of all friend info.
+    '''
     msg_list = Message.get_favorite_posts(request.user, int(offset))
     for i in range(len(msg_list)):
         msg_list[i]['time'] = msg_list[i]['time'].strftime('%a %b %d %H:%M:%S +0000 %Y')
@@ -205,6 +270,17 @@ def favorite(request, offset):
 @require_http_methods(['GET'])
 @login_required
 def audio(request):
+    '''Function for converting message text to mp3 audio.
+
+    This function extracts message text from GET query string
+    and converts it to mp3 using IBM tts api and ggmpeg.
+
+    Args:
+        request: Incoming request.
+
+    Returns:
+        Mp3 file to be played at front end.
+    '''
     from requests.auth import HTTPBasicAuth
     from requests import post
 
