@@ -24,5 +24,6 @@ urlpatterns = [
     url(r'^show$', views.show),
     url(r'^history/(?P<offset>[0-9]+)$', views.history),
     url(r'^audio$', views.audio),
-    url(r'^twitter$', views.twitter)
+    url(r'^twitter$', views.twitter),
+    url(r'^friends$', views.friends)
 ]

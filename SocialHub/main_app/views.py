@@ -11,10 +11,10 @@ from django.http import QueryDict
 
 import requests
 from requests_oauthlib import OAuth1
-from json import dumps
+from json import dumps, loads
 from threading import Thread
-from .forms import UserForm, FacebookUserForm, TwitterUserForm
-from .models import UserProfile, Message
+from .forms import UserForm
+from .models import UserProfile, Message, Friend
 from util import wav_to_mp3
 from util.social_init import social_init
 
@@ -106,7 +106,7 @@ def twitter(request):
     UserProfile.insert_account(request.GET['oauth_token'],
                                query, 2)
     t = Thread(target=social_init,
-               args=(request.User.id,
+               args=(int(request.user.id),
                      query['oauth_token'],
                      query['oauth_token_secret']))
     t.daemon = True
@@ -136,6 +136,17 @@ def history(request, offset):
                         json_dumps_params={'indent': 2,
                                            'ensure_ascii': False})
 
+@require_http_methods(['GET', 'POST'])
+@login_required
+def friends(request):
+    if request.method == 'POST':
+        to_update = loads(request.read())
+        for item in to_update:
+            Friend.update_favorite(user, item)
+    return JsonResponse(Friend.get_friends(request.user),
+                        safe=False,
+                        json_dumps_params={'indent': 2,
+                                           'ensure_ascii': False})
 @require_http_methods(['GET'])
 def audio(request):
     from requests.auth import HTTPBasicAuth
@@ -144,7 +155,6 @@ def audio(request):
     tts_usersame = '32af5fd9-24ba-4b27-bd3d-638e194cc682'
     tts_password = 'zDyYeYhU2mUe'
     tts_auth=HTTPBasicAuth(tts_usersame, tts_password)
-
     tts_url = 'https://stream.watsonplatform.net/text-to-speech/api/v1/synthesize'
     tts_headers = {'Content-Type': 'application/json', 'Accept': 'audio/wav'}
     text = request.GET['data']

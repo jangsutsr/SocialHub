@@ -72,12 +72,27 @@ class Friend(models.Model):
                                 default='')
     social_id = models.CharField(max_length=100,
                                  null=True)
+    is_favorite = models.SmallIntegerField(default=1)
 
     class Meta(object):
         db_table = 'friend'
         unique_together = (
             ('category', 'social_id'),
         )
+
+    @classmethod
+    def get_friends(cls, user):
+        return list(cls.objects\
+                       .filter(friendee=user)\
+                       .values('name', 'is_favorite',
+                               'category', 'social_id'))
+
+    @classmethod
+    def update_favorite(cls, user, user_info):
+        cls.objects.filter(friendee=user,
+                           category=user_info['category'],
+                           social_id=user_info['social_id'])\
+                   .update(is_favorite=0)
 
 class Message(models.Model):
     category = models.CharField(max_length=30,

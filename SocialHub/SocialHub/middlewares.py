@@ -24,8 +24,9 @@ class JsonToQueryMiddleware(object):
             try:
                 post = request.POST.copy()
                 form = loads(request.body)
-                for key, value in form.iteritems():
-                    post[key] = value
-                request.POST = post
+                if type(form) == dict:
+                    for key, value in form.iteritems():
+                        post[key] = value
+                    request.POST = post
             except Exception:
                 pass
