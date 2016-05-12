@@ -67,12 +67,4 @@ class Migration(migrations.Migration):
             name='userprofile',
             unique_together=set([('user',)]),
         ),
-        migrations.AlterUniqueTogether(
-            name='message',
-            unique_together=set([('category', 'social_id')]),
-        ),
-        migrations.AlterUniqueTogether(
-            name='friend',
-            unique_together=set([('category', 'social_id')]),
-        ),
     ]

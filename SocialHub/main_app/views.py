@@ -23,6 +23,19 @@ client_secret = 'QIIfKQjaGYdBZB1jL1lzGRgNFXCfk87AyyLr8uliHuPLFsYKSo'
 
 @require_http_methods(['POST'])
 def register(request):
+    '''View function handling user registration.
+
+    This function parse and validate incoming request's form data and check
+    table auth_user for authenticity before storing user record in table or
+    output error message.
+
+    Args:
+        request: Incoming request.
+
+    Returns:
+        Indicator that user is successfully created or error message that either
+        form data is invalid or user exists.
+    '''
     form = UserForm(request.POST)
     response = HttpResponse()
     if form.is_valid():
@@ -41,6 +54,20 @@ def register(request):
 
 @require_http_methods(['GET', 'POST'])
 def log_in(request):
+    '''View function corresponding to url /login.
+
+    The purpose of this function vary with http method. If method is GET it
+    behaves as unauthorize redirect destination; If method is POST it accepts
+    request's form data, validates it and adds session to authorize the user.
+
+    Args:
+        request: Incoming request
+
+    Returns:
+        When GET, indicate the page has been redirected here; When POST,
+        return either message that user is logged in or error that form invalid
+        or user name/password error.
+    '''
     response = HttpResponse()
     if request.method == 'GET':
         info(request, 'Indicator')
@@ -64,6 +91,16 @@ def log_in(request):
 @require_http_methods(['GET'])
 @login_required
 def log_out(request):
+    '''View function to log user out.
+
+    This function delete related session to log user out.
+
+    Args:
+        request: Incoming request.
+
+    Returns:
+        Message that user is successfully logged out.
+    '''
     logout(request)
     info(request, 'Session deleted')
     return HttpResponse(''.join([item.message for item in get_messages(request)]))
@@ -71,6 +108,12 @@ def log_out(request):
 @require_http_methods(['GET'])
 @login_required
 def attach(request, app_name):
+    '''View function to attach facebook/twitter account to user.
+
+    If a twitter account is to be attached, the incoming request is simply an
+    indicator. This function then call twitter request_token api to ask for a
+    temporary
+    '''
     response = HttpResponse()
     if app_name == 'facebook':
         success(request, 'facebook account attached')
@@ -92,6 +135,8 @@ def attach(request, app_name):
 
 @require_http_methods(['GET'])
 def twitter(request):
+    '''View function that
+    '''
     access_token_url = 'https://api.twitter.com/oauth/access_token'
     oauth_token_secret = UserProfile.objects\
                                     .filter(resource_owner_key=request.GET['oauth_token'])\
@@ -147,6 +192,7 @@ def friends(request):
                                            'ensure_ascii': False})
 
 @require_http_methods(['GET'])
+@login_required
 def favorite(request, offset):
     msg_list = Message.get_favorite_posts(request.user, int(offset))
     for i in range(len(msg_list)):
@@ -157,6 +203,7 @@ def favorite(request, offset):
                                            'ensure_ascii': False})
 
 @require_http_methods(['GET'])
+@login_required
 def audio(request):
     from requests.auth import HTTPBasicAuth
     from requests import post

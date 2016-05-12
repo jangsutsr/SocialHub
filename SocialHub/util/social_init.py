@@ -8,6 +8,26 @@ DATABASEURI = "mysql+mysqldb://admin:foobar@ec2-54-210-25-209.compute-1.amazonaw
 engine = create_engine(DATABASEURI)
 conn = None
 
+kws = {
+'Technology': set(['techstars', 'IBM Research', 'Red Hat, Inc.', 'OSXDaily', 'Post World', '60 Minutes', 'Think with Google', 'NYT Technology', 'Y Combinator', 'Mary Jo Foley', 'Mark Suster', 'TechCrunch']),
+'Sport': set(['USGA', 'Fox News Alert', 'Manchester United', 'Memphis', 'The Golf Fix', 'New York Yankees']),
+'Science': set(['The NPR Science Desk', 'WIRED Science', 'NASA History Office', 'Science Magazine']),
+'News': set(['Ayman Mohyeldin', 'Nicholas Kristof', 'Eyewitness News', 'Brian Tong', 'Tim Stevens', 'CNBC\'s Closing Bell Verified account', 'BuzzFeed Politics', 'Ainsley Earhardt', 'ABC News Live', 'WSJ Business News', 'ISS Research', 'CBS Sunday Morning', 'Fox News', 'The New York Times', 'CNN']),
+'Music': set(['HOT 97', 'The Rolling Stones', 'Cody Simpson', 'Ellie Goulding', 'Jordin Sparks', 'Nick Jonas', 'Eminem', 'Ed Sheeran', 'Taylor Swift', 'Lorde', 'Lana Del Rey', 'Manchester United'])
+}
+
+fb_img = 'http://popo.or.jp/images/amc/bnr_facebook.jpg'
+twitter_img = 'https://lh3.ggpht.com/lSLM0xhCA1RZOwaQcjhlwmsvaIQYaP3c5qbDKCgLALhydrgExnaSKZdGa8S3YtRuVA=w300'
+
+def get_tag(name):
+
+	name = name.encode('utf-8')
+	global kws
+	for tag in kws:
+		if name in kws[tag]:
+			return tag
+	return 'Other'
+
 def get_sql(command, args=None):
 
 	global conn
@@ -91,8 +111,10 @@ def social_init(user_id, resource_owner_key=None, resource_owner_secret=None, ac
 	if resource_owner_key and resource_owner_secret:
 		friends = twitter_api.get_friends(resource_owner_key, resource_owner_secret)
 		for friend in friends:
+			tag = get_tag(friend['name'])
+			image = friend['image'] if friend['image'] else twitter_img
 			try:
-				sql("insert into friend(name,category,social_id,friendee_id) values(%s,'twitter',%s,%s)", (friend['screen_name'].encode('utf-8'), friend['id'], user_id))
+				sql("insert into friend(name,category,social_id,friendee_id, tag, img, is_favorite) values(%s,'twitter',%s,%s,%s,%s,1)", (friend['name'].encode('utf-8'), friend['id'], user_id, tag, image))
 			except:
 				print 'uh oh, twitter friend insert conflict'
 				pass
@@ -102,8 +124,9 @@ def social_init(user_id, resource_owner_key=None, resource_owner_secret=None, ac
 	if access_token:
 		friends = fb_api.get_friends(access_token)
 		for friend in friends:
+			tag = get_tag(friend['name'])
 			try:
-				sql("insert into friend(name,category,social_id,friendee_id) values(%s,'facebook',%s,%s)", (friend['name'].encode('utf-8'), friend['id'].encode('utf-8'), user_id))
+				sql("insert into friend(name,category,social_id,friendee_id, tag, img, is_favorite) values(%s,'facebook',%s,%s,%s,%s,1)", (friend['name'].encode('utf-8'), friend['id'].encode('utf-8'), user_id, tag, fb_img))
 			except:
 				print 'uh oh, facebook friend insert conflict'
 				pass
@@ -116,20 +139,23 @@ def social_init(user_id, resource_owner_key=None, resource_owner_secret=None, ac
 		print "uh oh, problem disconnecting from database"
 		pass
 
+if __name__ == '__main__':
+
+	try:
+		conn = engine.connect()
+	except:
+		print "uh oh, problem connecting to database"
+		import traceback; traceback.print_exc()
+
+	user_id = 1
+	resource_owner_key = '718865201123168256-obsAg2PAjpTvaSr70B4UWVybBSAfs5S'
+	resource_owner_secret = 'Wssq0oEU6eNp9whollPlAtiDJZn9nVhz7Keag5tplu3y7'
+	access_token = 'EAACEdEose0cBAJf9AWGw9VuxZBWfBhfdf8fQ8RiI1bNp5jtIrECyOiIO70SGiuinuwlISGaLiZBRLxZCuDmJQnshW85ZAZBZCDszhl0EUGHqGDaZAg1oby9ecEZCjUGFdTh6xogRSHH5fUeQYKXv2rBYJG7oVNiwIeSZBnCiDR1ZAVgAZDZD'
 
 
-# if __name__ == '__main__':
 
-# 	try:
-# 		conn = engine.connect()
-# 	except:
-# 		print "uh oh, problem connecting to database"
-# 		import traceback; traceback.print_exc()
 
-# 	users = get_sql('select id from auth_user')
-# 	user_id = users[0][0]
 
-# 	friends = twitter_api.get_friends(resource_owner_key, resource_owner_secret)
-# 	for friend in friends:
-# 		sql("insert into friend(name,category,social_id,friendee_id) values('%s','twitter',%s,%s)" % (friend['screen_name'], friend['id'], str(user_id)))
+
+
 

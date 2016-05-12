@@ -89,7 +89,7 @@ def get_friends(resource_owner_key, resource_owner_secret, friendslist=None):
 			friend = json.loads(r.content)[0]
 			tmp = dict()
 			tmp['id'] = friend['id']
-			tmp['screen_name'] = friend['screen_name']
+			tmp['name'] = friend['name']
 			if friend['profile_image_url']:
 				tmp['image'] = friend['profile_image_url']
 			else:

@@ -80,7 +80,7 @@ class Friend(models.Model):
     class Meta(object):
         db_table = 'friend'
         unique_together = (
-            ('category', 'social_id'),
+            ('category', 'social_id', 'friendee'),
         )
 
     @classmethod
@@ -114,7 +114,7 @@ class Message(models.Model):
     class Meta(object):
         db_table = 'message'
         unique_together = (
-            ('category', 'social_id'),
+            ('category', 'social_id', 'owner'),
         )
 
     @classmethod
