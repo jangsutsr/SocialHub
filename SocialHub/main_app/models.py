@@ -73,6 +73,9 @@ class Friend(models.Model):
     social_id = models.CharField(max_length=100,
                                  null=True)
     is_favorite = models.SmallIntegerField(default=1)
+    tag = models.CharField(max_length=50,
+                           default='other')
+    img = models.URLField(default='')
 
     class Meta(object):
         db_table = 'friend'
@@ -85,7 +88,8 @@ class Friend(models.Model):
         return list(cls.objects\
                        .filter(friendee=user)\
                        .values('name', 'is_favorite',
-                               'category', 'social_id'))
+                               'category', 'social_id',
+                               'img', 'tag'))
 
     @classmethod
     def update_favorite(cls, user, user_info):
@@ -120,13 +124,15 @@ class Message(models.Model):
                                        time__gte=last_query)\
                                .order_by('time')\
                                .values('author__name', 'message',
-                                       'time', 'category'))[:1000]
+                                       'author__tag', 'author__img',
+                                       'time', 'category'))[:200]
 
     @classmethod
     def get_offset_posts(cls, user, offset):
         return list(cls.objects.filter(owner=user.id)\
                                .order_by('time')\
                                .values('author__name', 'message',
+                                       'author__tag', 'author__img',
                                        'time', 'category'))[offset:offset+10]
 
     @classmethod
@@ -135,4 +141,5 @@ class Message(models.Model):
                                        author__is_favorite=0)\
                                .order_by('time')\
                                .values('author__name', 'message',
+                                       'author__tag', 'author__img',
                                        'time', 'category'))[offset:offset+10]
