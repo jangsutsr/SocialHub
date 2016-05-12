@@ -120,11 +120,19 @@ class Message(models.Model):
                                        time__gte=last_query)\
                                .order_by('time')\
                                .values('author__name', 'message',
-                                       'time', 'category'))
+                                       'time', 'category'))[:1000]
 
     @classmethod
     def get_offset_posts(cls, user, offset):
         return list(cls.objects.filter(owner=user.id)\
+                               .order_by('time')\
+                               .values('author__name', 'message',
+                                       'time', 'category'))[offset:offset+10]
+
+    @classmethod
+    def get_favorite_posts(cls, user, offset):
+        return list(cls.objects.filter(owner=user.id,
+                                       author__is_favorite=0)\
                                .order_by('time')\
                                .values('author__name', 'message',
                                        'time', 'category'))[offset:offset+10]

@@ -147,6 +147,17 @@ def friends(request):
                         safe=False,
                         json_dumps_params={'indent': 2,
                                            'ensure_ascii': False})
+
+@require_http_methods(['GET'])
+def favorite(request, offset):
+    msg_list = Message.get_favorite_posts(request.user, int(offset))
+    for i in range(len(msg_list)):
+        msg_list[i]['time'] = msg_list[i]['time'].strftime('%a %b %d %H:%M:%S +0000 %Y')
+    return JsonResponse(msg_list,
+                        safe=False,
+                        json_dumps_params={'indent': 2,
+                                           'ensure_ascii': False})
+
 @require_http_methods(['GET'])
 def audio(request):
     from requests.auth import HTTPBasicAuth
