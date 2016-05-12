@@ -52,7 +52,8 @@ angular.module('starter', ['ionic', 'starter.controllers', 'ngCordova'])
       url: '/friends',
       views: {
         'menuContent': {
-          templateUrl: 'templates/friends.html'
+          templateUrl: 'templates/friends.html',
+          controller: 'FriendsCtrl'
         }
       }
     })
