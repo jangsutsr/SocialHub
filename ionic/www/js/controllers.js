@@ -164,13 +164,8 @@ angular.module('starter.controllers', [])
         }
     }
 })
-.controller('PlaylistCtrl', function($scope, $stateParams, pass) {
-    console.log(pass.get().text);
-    $scope.obj = pass.get();
-})
 .controller('ProfileCtrl', function($scope, $http, $window) {
   $scope.TwitterAttach = function() {
-
   $http.get(serverURL+"/attach/twitter")
     //$http.get("http://127.0.0.1:8000/" + "login")
       .then(function(response) {
@@ -180,12 +175,28 @@ angular.module('starter.controllers', [])
         //$http.get('http://www.google.com');
         window.open(url); 
     });
-
   };
+})
 
+.controller('FriendsCtrl', function($scope) {
+    $scope.myList = [
+    {name:'Choice one'},
+    {name:'Choice two'},{name:"Choice three"}
+    ];
+    $scope.count = function() {
+      for (var i = $scope.myList.length - 1; i >= 0; i--) {
+        console.log($scope.myList[i].selected);
+      }
+      
+    };
+})
+
+
+
+.controller('PlaylistCtrl', function($scope, $stateParams, pass) {
+    console.log(pass.get().text);
+    $scope.obj = pass.get();
 });
-
-
 
 
 document.addEventListener("deviceready", onDeviceReady, false);

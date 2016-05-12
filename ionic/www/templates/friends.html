@@ -1,5 +1,18 @@
 <ion-view view-title="FavoFriends">
   <ion-content>
-    <h1>aa</h1>
+  	<ion-list>
+
+	  <ul class="list">
+	    <li class="item item-checkbox" ng-repeat='item in myList | filter: search'>
+	  <label class="checkbox">
+	   <input type="checkbox" ng-model="item.selected">
+	  </label>
+	       <p ng-bind-html="item.name"></p>
+
+	    </li>
+	    <ul>
+
+    <button class="button button-block button-positive" ng-click="count()">Twitter</button>
+	</ion-list>
   </ion-content>
 </ion-view>

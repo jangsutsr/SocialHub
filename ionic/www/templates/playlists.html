@@ -1,7 +1,18 @@
 <ion-view view-title="Playlists">
   <ion-content>
-  	<input type="text" ng-model="test" placeholder="Filter" style="width: 100%;padding: 10px">
-
+    <div class="row" style="padding-bottom: 0px;">
+      <div class="col col-80" style="padding-bottom: 0px;padding-top: 0px">
+  	     <input type="text" ng-model="test" placeholder="Filter" style="width: 100%;padding: 10px">
+      </div>
+      <div class="col" style="padding-bottom: 0px;padding-top: 0px">
+        <select>
+          <option selected></option>
+          <option>Blue</option>
+          <option>Green</option>
+          <option>Red</option>
+        </select>
+      </div>
+    </div>
     <ion-list>
       <ion-item ng-repeat="playlist in playlists | filter : test" style="padding: 5px">
         <div class="row">
