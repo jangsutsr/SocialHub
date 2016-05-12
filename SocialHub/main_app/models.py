@@ -42,18 +42,18 @@ class UserProfile(models.Model):
                            resource_owner_secret=query_form['oauth_token_secret'])
 
     @classmethod
-    def insert_account(cls, form, user, cate):
+    def insert_account(cls, token, form, cate):
         if cate == 1:
             cls.objects.filter(user=user.id)\
                     .update(fb_name=form.cleaned_data['name'],
                             fb_token=form.cleaned_data['token'],
                             fb_id=form.cleaned_data['identity'])
         elif cate == 2:
-            cls.objects.filter(user=user.id)\
-                    .update(twitter_name=form.cleaned_data['name'],
-                            twitter_id=form.cleaned_data['identity'],
-                            resource_owner_key=form.cleaned_data['key'],
-                            resource_owner_secret=form.cleaned_data['secret'])
+            cls.objects.filter(resource_owner_key=token)\
+                    .update(twitter_name=form['screen_name'],
+                            twitter_id=form['user_id'],
+                            resource_owner_key=form['oauth_token'],
+                            resource_owner_secret=form['oauth_token_secret'])
 
     @classmethod
     def update_query_time(cls, user):

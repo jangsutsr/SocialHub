@@ -67,17 +67,11 @@ def log_out(request):
     return HttpResponse(''.join([item.message for item in get_messages(request)]))
 
 @require_http_methods(['GET'])
-#@login_required
+@login_required
 def attach(request, app_name):
     response = HttpResponse()
     if app_name == 'facebook':
-        form = FacebookUserForm(request.GET)
-        if form.is_valid():
-            UserProfile.insert_account(form, request.user, 1)
-            success(request, 'facebook account attached')
-        else:
-            error(request, 'Invalid input data')
-            response.status_code = 400
+        success(request, 'facebook account attached')
     elif app_name == 'twitter':
         request_token_url = 'https://api.twitter.com/oauth/request_token'
         oauth = OAuth1(client_key,
@@ -96,7 +90,18 @@ def attach(request, app_name):
 
 @require_http_methods(['GET'])
 def twitter(request):
-    print request.body
+    access_token_url = 'https://api.twitter.com/oauth/access_token'
+    oauth_token_secret = UserProfile.objects\
+                                    .filter(resource_owner_key=request.GET['oauth_token'])\
+                                    .get().resource_owner_secret
+    oauth = OAuth1(client_key=client_key,
+                   client_secret=client_secret,
+                   resource_owner_key=request.GET['oauth_token'],
+                   resource_owner_secret=oauth_token_secret,
+                   verifier=request.GET['oauth_verifier'])
+    r = requests.post(url=access_token_url, auth=oauth)
+    UserProfile.insert_account(request.GET['oauth_token'],
+                               QueryDict(r.content), 2)
     return HttpResponse(request.body)
 
 @require_http_methods(['GET'])
