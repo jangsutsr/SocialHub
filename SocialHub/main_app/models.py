@@ -127,7 +127,7 @@ class Message(models.Model):
                                .order_by('time')\
                                .values('author__name', 'message',
                                        'author__tag', 'author__img',
-                                       'time', 'category'))[:200]
+                                       'time', 'category'))[-50:]
 
     @classmethod
     def get_offset_posts(cls, user, offset):
@@ -135,7 +135,7 @@ class Message(models.Model):
                                .order_by('time')\
                                .values('author__name', 'message',
                                        'author__tag', 'author__img',
-                                       'time', 'category'))[offset:offset+10]
+                                       'time', 'category'))[offset:offset+50]
 
     @classmethod
     def get_favorite_posts(cls, user, offset):
@@ -144,4 +144,4 @@ class Message(models.Model):
                                .order_by('time')\
                                .values('author__name', 'message',
                                        'author__tag', 'author__img',
-                                       'time', 'category'))[offset:offset+10]
+                                       'time', 'category'))[offset:offset+50]
