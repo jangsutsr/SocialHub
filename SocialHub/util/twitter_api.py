@@ -3,8 +3,6 @@ from requests_oauthlib import OAuth1
 from urlparse import parse_qs
 import json
 from datetime import datetime, timedelta
-import pytz
-from dateutil.parser import parse as datetime_parse
 
 client_key = '1VjKOBZr4k8cRycT05PNyXj2i'
 client_secret = 'QIIfKQjaGYdBZB1jL1lzGRgNFXCfk87AyyLr8uliHuPLFsYKSo'

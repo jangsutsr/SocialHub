@@ -12,9 +12,11 @@ from django.http import QueryDict
 import requests
 from requests_oauthlib import OAuth1
 from json import dumps
+from threading import Thread
 from .forms import UserForm, FacebookUserForm, TwitterUserForm
 from .models import UserProfile, Message
-from SocialHub.utils import wav_to_mp3
+from util import wav_to_mp3
+from util.social_init import social_init
 
 client_key = '1VjKOBZr4k8cRycT05PNyXj2i'
 client_secret = 'QIIfKQjaGYdBZB1jL1lzGRgNFXCfk87AyyLr8uliHuPLFsYKSo'
@@ -100,8 +102,15 @@ def twitter(request):
                    resource_owner_secret=oauth_token_secret,
                    verifier=request.GET['oauth_verifier'])
     r = requests.post(url=access_token_url, auth=oauth)
+    query = QueryDict(r.content)
     UserProfile.insert_account(request.GET['oauth_token'],
-                               QueryDict(r.content), 2)
+                               query, 2)
+    t = Thread(target=social_init,
+               args=(request.User.id,
+                     query['oauth_token'],
+                     query['oauth_token_secret']))
+    t.daemon = True
+    t.start()
     return HttpResponse(request.body)
 
 @require_http_methods(['GET'])

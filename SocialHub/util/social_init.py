@@ -2,7 +2,6 @@ import requests
 import json
 from sqlalchemy import *
 from datetime import datetime, timedelta
-import pytz
 import twitter_api, fb_api
 
 DATABASEURI = "mysql+mysqldb://admin:foobar@ec2-54-210-25-209.compute-1.amazonaws.com:3306/SocialHub"
@@ -133,11 +132,4 @@ def social_init(user_id, resource_owner_key=None, resource_owner_secret=None, ac
 # 	friends = twitter_api.get_friends(resource_owner_key, resource_owner_secret)
 # 	for friend in friends:
 # 		sql("insert into friend(name,category,social_id,friendee_id) values('%s','twitter',%s,%s)" % (friend['screen_name'], friend['id'], str(user_id)))
-
-
-
-
-
-
-
 

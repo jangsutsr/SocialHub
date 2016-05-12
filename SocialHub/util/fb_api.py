@@ -19,6 +19,7 @@ def get_friends(access_token):
 			tmp['name'] = like['name']
 			likes.append(tmp)
 	except:
+		print r.content
 		print 'facebook friends request excesses rate limit'
 	return likes
 
@@ -51,6 +52,7 @@ def get_posts(likes, access_token, start_time, end_time):
 				tmp['page_name'] = like[1]
 				posts.append(tmp)
 	except:
+		print r.content
 		print 'facebook posts request excesses rate limit'
 	return posts
 
