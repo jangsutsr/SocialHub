@@ -38,21 +38,30 @@ angular.module('starter', ['ionic', 'starter.controllers', 'ngCordova'])
     controller: 'AppCtrl'
   })
 
-  .state('app.history', {
-    url: '/history',
+  .state('app.newpost', {
+    url: '/newpost',
     views: {
       'menuContent': {
-        templateUrl: 'templates/history.html',
+        templateUrl: 'templates/newpost.html',
           controller: 'PlaylistsCtrl'
       }
     }
   })
 
-  .state('app.browse', {
-      url: '/browse',
+  .state('app.friends', {
+      url: '/friends',
       views: {
         'menuContent': {
-          templateUrl: 'templates/browse.html'
+          templateUrl: 'templates/friends.html'
+        }
+      }
+    })
+  .state('app.profile', {
+      url: '/profile',
+      views: {
+        'menuContent': {
+          templateUrl: 'templates/profile.html',
+          controller: 'ProfileCtrl'
         }
       }
     })

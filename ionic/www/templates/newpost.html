@@ -1,9 +1,9 @@
-<ion-view view-title="Playlists">
+<ion-view view-title="New Post">
   <ion-content>
-  	<input type="text" ng-model="test" placeholder="Filter" style="width: 100%;padding: 10px">
+  	<input ng-show="HaveNewPost" type="text" ng-model="test" placeholder="Filter" style="width: 100%;padding: 10px">
 
     <ion-list>
-      <ion-item ng-repeat="playlist in playlists | filter : test" style="padding: 5px">
+      <ion-item ng-repeat="playlist in newposts | filter : test" style="padding: 5px">
         <div class="row">
 	      	<div class="col col-75" ng-click="detail({{playlist}})">
 	      		<p>{{playlist.author__name}}</p>
@@ -14,7 +14,9 @@
 	        </div>
         </div>
       </ion-item>
+      <label ng-hide="HaveNewPost">Havn't received any new post yet. Check out all posts in your Playlist!</label>
     </ion-list>
+
   </ion-content>
 
 
