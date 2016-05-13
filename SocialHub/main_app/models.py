@@ -7,6 +7,22 @@ from django.dispatch import receiver
 from django.db.models.signals import post_save
 
 class UserProfile(models.Model):
+    '''Profile associated with actual users providing extra user info.
+
+    Attributes:
+        user: Foreign key associated with user.
+        fb_name: Facebook user name attached by user.
+        fb_token: Facebook token attached by user.
+        fb_id: Facebook social id attached by user.
+        twitter_name: Twitter user name attached by user.
+        resource_owner_key: Twitter user key attached by user.
+        resource_owner_secret: Twitter user secret attached by user.
+        twitter_id: Twitter user id attached by user.
+        last_query: Time of the last call of /show url. Used to segment
+        messages by period.
+        last_fetch: Time of the last execution of message fetch script.
+        Used to avoid duplicate messages.
+    '''
     user = models.ForeignKey(User,
                              on_delete=models.CASCADE)
     fb_name = models.CharField(max_length=30,
@@ -30,6 +46,8 @@ class UserProfile(models.Model):
     @staticmethod
     @receiver(post_save, sender=User)
     def create_profile(sender, **kwargs):
+        '''Callback function triggered by creation of new user.
+        '''
         if kwargs['created']:
             UserProfile.objects.create(user=kwargs['instance'],
                                        last_query=timezone.now(),
@@ -37,6 +55,12 @@ class UserProfile(models.Model):
 
     @classmethod
     def insert_twitter_token(cls, form, user):
+        '''Function for storing temporary token and secret.
+
+        This function is needed because temporary token and secret are needed
+        for fetching the corresponding user_profile when fetching the actual
+        token and secret.
+        '''
         cls.objects\
            .filter(user=user.id)\
            .update(resource_owner_key=form['oauth_token'],
@@ -44,6 +68,8 @@ class UserProfile(models.Model):
 
     @classmethod
     def insert_account(cls, token, form, cate):
+        '''Function for storing social network api authentication info.
+        '''
         if cate == 1:
             cls.objects\
                .filter(user=user.id)\
@@ -60,10 +86,23 @@ class UserProfile(models.Model):
 
     @classmethod
     def update_query_time(cls, user):
+        '''Function used for updating query_time when /show is called.
+        '''
         cls.objects.filter(user=user.id)\
                    .update(last_query=timezone.now())
 
 class Friend(models.Model):
+    '''Table containing info of user's friends.
+
+    Attributes:
+        friendee: Foreign key pointing to the user whom the friend is associated.
+        name: Friend name.
+        catecory: Indicator of whether the friend is a fb friend or twitter friend.
+        social_id: social_id associated with each fb/twitter user.
+        is_favorite: Boolean indicating if the friend is a favorite one.
+        tag: The category of the friend to be shown in front end.
+        img: URL of the image used to identify friends in front end.
+    '''
     friendee = models.ForeignKey(User,
                                  on_delete=models.CASCADE)
     name = models.CharField(max_length=30,
@@ -85,6 +124,8 @@ class Friend(models.Model):
 
     @classmethod
     def get_friends(cls, user):
+        '''Function for retriving the whole list of a user's friends.
+        '''
         return list(cls.objects\
                        .filter(friendee=user)\
                        .values('name', 'is_favorite',
@@ -93,6 +134,8 @@ class Friend(models.Model):
 
     @classmethod
     def update_favorite(cls, user, to_update):
+        '''Function to update the is_favorite property of a user's friends.
+        '''
         cls.objects.all().update(is_favorite=1)
         for item in to_update:
             cls.objects.filter(friendee=user,
@@ -101,6 +144,15 @@ class Friend(models.Model):
                        .update(is_favorite=0)
 
 class Message(models.Model):
+    '''Table containing general info of specific messages.
+
+    Attributes:
+        category: Whether this message is a tweet or fb message.
+        time: Post time of the post.
+        author: Foreign key pointing to the friend posting this message.
+        owner: Foreign Key pointing to the user this message belongs to.
+        social_id: The unique id pertaining to each message.
+    '''
     category = models.CharField(max_length=30,
                                 default='')
     message = models.TextField(default='')
@@ -119,6 +171,8 @@ class Message(models.Model):
 
     @classmethod
     def get_posts(cls, user):
+        '''Function for retriving the newest posts of a user.
+        '''
         last_query = UserProfile.objects.filter(user=user)\
                                         .get()\
                                         .last_query
@@ -131,6 +185,8 @@ class Message(models.Model):
 
     @classmethod
     def get_offset_posts(cls, user, offset):
+        '''Function for retriving posts starting from a particular offest.
+        '''
         return list(cls.objects.filter(owner=user.id)\
                                .order_by('time')\
                                .values('author__name', 'message',
@@ -139,6 +195,9 @@ class Message(models.Model):
 
     @classmethod
     def get_favorite_posts(cls, user, offset):
+        '''Function for retriving offsetted posts of only the favorite friends
+        of a user.
+        '''
         return list(cls.objects.filter(owner=user.id,
                                        author__is_favorite=0)\
                                .order_by('time')\
