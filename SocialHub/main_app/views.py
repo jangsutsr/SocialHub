@@ -294,3 +294,21 @@ def audio(request):
     response = HttpResponse(wav_to_mp3(data.content), content_type='audio/mp3')
     response['Content-Disposition'] = 'attachment; filename="test.mp3"'
     return response
+
+@require_http_methods(['GET'])
+def get_sentiment(request):
+    '''Function for retriving sentimental info from message text.
+    '''
+    from requests import post
+
+    text = request.GET['data']
+    text = text[:text.rfind('https://')].strip()
+    res = None
+    try:
+        re = post("http://gateway-a.watsonplatform.net/calls/text/TextGetTextSentiment",
+                  data={'apikey': '97fc6b55135551d309866e3189fa387feda3de01',
+                        'text': text, 'outputMode': 'json'})
+        res = loads(re.text)['docSentiment']['type']
+    except Exception:
+        res = 'neutral'
+    return HttpResponse(res)
