@@ -1,9 +1,35 @@
 <ion-view view-title="Playlist">
   <ion-content>
-    <h1>Details</h1>
-	<p>{{obj.author__name}}</p>
-	<p>{{obj.message}}</p>
-	<p>{{obj.time}}</p>
-	<p>{{obj.category}}</p>
+  	<div class="row">
+  		<img src=>
+		<h3 style="margin: 5px 5px;"></h3>
+  	</div>
+
+	<div class="list card">
+
+	  <div class="item item-avatar">
+	    <img src={{obj.author__img}}>
+	    <h2>{{obj.author__name}}</h2>
+	    <p>{{obj.time}}</p>
+	  </div>
+
+	  <div class="item item-body">
+	    <img class="full-image" src="img/sample.jpg">
+	    <p>
+	      {{obj.message}}
+	    </p>
+		<a class="item item-icon-left assertive" ng-click="play({{obj}})">
+			<i class="icon ion-play"></i>
+		    Read Out
+		</a>
+	  </div>
+
+	</div>
+
   </ion-content>
 </ion-view>
+
+<div class="bar bar-footer bar-energized">
+  <div class="title">
+	<p class="uppercase">{{obj.category}} POST</p></div>
+</div>

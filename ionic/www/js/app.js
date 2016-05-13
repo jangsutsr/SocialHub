@@ -31,7 +31,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'ngCordova'])
 
   $stateProvider
 
-    .state('app', {
+  .state('app', {
     url: '/app',
     abstract: true,
     templateUrl: 'templates/menu.html',
@@ -39,6 +39,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'ngCordova'])
   })
 
   .state('app.newpost', {
+    cache: false,
     url: '/newpost',
     views: {
       'menuContent': {
@@ -48,7 +49,19 @@ angular.module('starter', ['ionic', 'starter.controllers', 'ngCordova'])
     }
   })
 
+  .state('app.interest', {
+    cache: false,
+    url: '/interest',
+    views: {
+      'menuContent': {
+        templateUrl: 'templates/interest.html',
+          controller: 'PlaylistsCtrl'
+      }
+    }
+  })
+
   .state('app.friends', {
+    cache: false,
       url: '/friends',
       views: {
         'menuContent': {
@@ -67,6 +80,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'ngCordova'])
       }
     })
     .state('app.playlists', {
+      cache: false,
       url: '/playlists',
       views: {
         'menuContent': {
@@ -81,7 +95,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'ngCordova'])
     views: {
       'menuContent': {
         templateUrl: 'templates/playlist.html',
-        controller: 'PlaylistCtrl'
+        controller: 'PlaylistsCtrl'
       }
     }
   });

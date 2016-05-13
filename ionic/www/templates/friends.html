@@ -2,17 +2,38 @@
   <ion-content>
   	<ion-list>
 
+    <button class="button button-block button-positive center" ng-click="count()" style="width: 90%">Update FavoFriends List</button>
+	  <div class="item item-divider">
+	    Twitter
+	  </div>	
 	  <ul class="list">
-	    <li class="item item-checkbox" ng-repeat='item in myList | filter: search'>
-	  <label class="checkbox">
-	   <input type="checkbox" ng-model="item.selected">
-	  </label>
-	       <p ng-bind-html="item.name"></p>
-
+	    <li class="item item-checkbox" ng-repeat='item in ttlist'>
+		  <label class="checkbox">
+		   <input type="checkbox" ng-model="item.selected" ng-checked='!item.is_favorite'>
+		  </label>
+		  <img src={{item.img}} style="display: inline;">
+	       <label style="padding-left: 10px" ng-bind-html="item.name"></label>
 	    </li>
-	    <ul>
+	  <ul>
 
-    <button class="button button-block button-positive" ng-click="count()">Twitter</button>
+	  <div class="item item-divider">
+	    Facebook
+	  </div>
+	  <ul class="list">
+	    <li class="item item-checkbox" ng-repeat='item in fblist'>
+		  <label class="checkbox">
+		   <input type="checkbox" ng-model="item.selected" ng-checked='!item.is_favorite'>
+		  </label>
+	       <p ng-bind-html="item.name"></p>
+	    </li>
+	  <ul>
+
 	</ion-list>
   </ion-content>
+    <!-- align to the bottom of the page -->
+    <div style="position: absolute; bottom: 0px; width: 100%">
+        <div style="text-align: center">
+          <p>Bottom</p>
+        </div>
+    </div>
 </ion-view>

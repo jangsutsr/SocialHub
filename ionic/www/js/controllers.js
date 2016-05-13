@@ -32,6 +32,23 @@ angular.module('starter.controllers', [])
     $scope.loginmodal.show();
   };
 
+  $scope.logout = function() {
+     // A confirm dialog
+     var confirmPopup = $ionicPopup.confirm({
+       title: 'Confirm Logout',
+       template: 'Are you sure you want to logout?'
+     });
+
+     confirmPopup.then(function(res) {
+       if(res) {
+        $http.get(serverURL+"/logout")
+          .then(function(response) {
+            $scope.IsLoggedIn = false;
+        });  
+       } 
+     });
+  }
+
   // Perform the login action when the user submits the login form
   $scope.doLogin = function() {
     console.log('Doing login', $scope.loginData);
@@ -49,6 +66,7 @@ angular.module('starter.controllers', [])
         alertPopup.then(function(res) {
           $scope.closeLogin();
         });
+        $scope.IsLoggedIn = true;
 
       }, function errorCallback(response) {
         var alertPopup = $ionicPopup.alert({
@@ -66,17 +84,14 @@ angular.module('starter.controllers', [])
     $scope.registermodal = modal;
   });
 
-  // Triggered in the login modal to close it
   $scope.closeRegister = function() {
     $scope.registermodal.hide();
   };
 
-  // Open the login modal
   $scope.Register = function() {
     $scope.registermodal.show();
   };
 
-  // Perform the login action when the user submits the login form
   $scope.doRegister = function() {
     $http({
       method: 'POST',
@@ -98,29 +113,63 @@ angular.module('starter.controllers', [])
            title: 'Error',
            template: response.data
         });
-      });
+    });
 
   };
 })
 
-.controller('PlaylistsCtrl', function($scope, $http, $cordovaMedia, $ionicLoading, $location, pass) {
-    $http.get(serverURL+"/history/200")
-    //$http.get("http://127.0.0.1:8000/" + "login")
-      .then(function(response) {
-          posts = response.data;
-          $scope.playlists = posts;
-    });
+.controller('PlaylistsCtrl', function($scope, $http, $cordovaMedia, $ionicLoading, $location, pass, $state) {
+    console.log($state.current.name);
+    if ($state.current.name == 'app.playlists'){
+      $http.get(serverURL+"/history/0")
+        .then(function(response) {
+            $scope.playlists = response.data;
+      });  
+    } else if ($state.current.name == 'app.newpost') {
+      $http.get(serverURL+"/show")
+        .then(function(response) {
+            $scope.newposts = response.data;
+            if ($scope.newposts.length>0) 
+              $scope.HaveNewPost = true;
+            else
+              $scope.HaveNewPost = false;
+            console.log($scope.HaveNewPost);
+      });
+    } else {
+      $http.get(serverURL+"/favorite/0")
+        .then(function(response) {
+            $scope.favoposts = response.data;
+      });  
+    }
 
-    $http.get(serverURL+"/show")
-      .then(function(response) {
-          $scope.newposts = response.data;
-    });
-
-    if ($scope.newposts) 
-      $scope.HaveNewPost = true;
-    else
-      $scope.HaveNewPost = false;
-    console.log($scope.HaveNewPost);
+    $scope.options =  [{
+        "name" : "Category Filter",
+        "value": ""
+      },
+      {
+        "name" : "Technology",
+        "value": "Technology"
+      },
+      {
+        "name" : "Sport",
+        "value": "Sport"
+      },
+      {
+        "name" : "Science",
+        "value": "Science"
+      },
+      {
+        "name" : "News",
+        "value": "News"
+      },
+      {
+        "name" : "Music",
+        "value": "Music"
+      },
+      {
+        "name" : "Other",
+        "value": "Other"
+      }];
 
     $scope.play = function(src) {
       console.log(src.message);
@@ -163,31 +212,74 @@ angular.module('starter.controllers', [])
             $ionicLoading.hide();
         }
     }
+
+    $scope.obj = pass.get();
+    
 })
 .controller('ProfileCtrl', function($scope, $http, $window) {
   $scope.TwitterAttach = function() {
-  $http.get(serverURL+"/attach/twitter")
-    //$http.get("http://127.0.0.1:8000/" + "login")
-      .then(function(response) {
-        console.log(response.data);
-        var url = 'https://api.twitter.com/oauth/authenticate?oauth_token='+response.data;
-        //$window.location.href = 'http://localhost:5000/surround';
-        //$http.get('http://www.google.com');
-        window.open(url); 
+    $http.get(serverURL+"/attach/twitter")
+      //$http.get("http://127.0.0.1:8000/" + "login")
+        .then(function(response) {
+          console.log(response.data);
+          var url = 'https://api.twitter.com/oauth/authenticate?oauth_token='+response.data;
+          //$window.location.href = 'http://localhost:5000/surround';
+          //$http.get('http://www.google.com');
+          window.cordova.InAppBrowser.open(url, "_blank", 'location=no');
     });
   };
 })
 
-.controller('FriendsCtrl', function($scope) {
-    $scope.myList = [
-    {name:'Choice one'},
-    {name:'Choice two'},{name:"Choice three"}
-    ];
+.controller('FriendsCtrl', function($scope, $http, $ionicPopup, $state) {
+
+    $scope.ttlist = [];
+    $scope.fblist = [];
+    $http.get(serverURL+"/friends")
+        .then(function(response) {
+          var friendslist = response.data;
+          for (var i = friendslist.length - 1; i >= 0; i--) {
+            if (friendslist[i].category=='twitter')
+              $scope.ttlist.push(friendslist[i]);
+            else
+              $scope.fblist.push(friendslist[i]);
+          }
+          for (var i = $scope.ttlist.length - 1; i >= 0; i--) 
+            $scope.ttlist[i].selected = !$scope.ttlist[i].is_favorite;
+          for (var i = $scope.fblist.length - 1; i >= 0; i--) 
+            $scope.fblist[i].selected = !$scope.fblist[i].is_favorite;
+    });
+
     $scope.count = function() {
-      for (var i = $scope.myList.length - 1; i >= 0; i--) {
-        console.log($scope.myList[i].selected);
+      var newfavo = [];
+      for (var i = $scope.ttlist.length - 1; i >= 0; i--) {
+        if ($scope.ttlist[i].selected){
+          newfavo.push({'category':$scope.ttlist[i].category, 'social_id':$scope.ttlist[i].social_id});
+        }
       }
-      
+      for (var i = $scope.fblist.length - 1; i >= 0; i--) {
+        console.log($scope.fblist[i].selected);
+        if ($scope.fblist[i].selected){
+          newfavo.push({'category':$scope.fblist[i].category, 'social_id':$scope.fblist[i].social_id});
+        }
+      }
+      console.log(newfavo);
+
+      $http({
+        method: 'POST',
+        url: serverURL+'/friends',
+        data: newfavo
+      }).then(function successCallback(response) {
+          var alertPopup = $ionicPopup.alert({
+             title: 'Success',
+             template: 'Successfully Update the Friends List!'
+          });
+        }, function errorCallback(response) {
+          var alertPopup = $ionicPopup.alert({
+             title: 'Error',
+             template: response.data
+          });
+      });
+
     };
 })
 
