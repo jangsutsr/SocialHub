@@ -6,6 +6,8 @@ from django.utils import timezone
 from django.dispatch import receiver
 from django.db.models.signals import post_save
 
+from datetime import timedelta
+
 class UserProfile(models.Model):
     '''Profile associated with actual users providing extra user info.
 
@@ -177,7 +179,7 @@ class Message(models.Model):
                                         .get()\
                                         .last_query
         return list(cls.objects.filter(owner=user.id,
-                                       time__gte=last_query)\
+                                       time__gte=last_query-timedelta(hours=1))\
                                .order_by('time')\
                                .values('author__name', 'message',
                                        'author__tag', 'author__img',
