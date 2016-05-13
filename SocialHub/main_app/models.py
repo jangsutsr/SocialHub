@@ -179,7 +179,7 @@ class Message(models.Model):
                                         .get()\
                                         .last_query
         return list(cls.objects.filter(owner=user.id,
-                                       time__gte=last_query-timedelta(hours=1))\
+                                       time__gte=last_query-timedelta(hours=4))\
                                .order_by('time')\
                                .values('author__name', 'message',
                                        'author__tag', 'author__img',
