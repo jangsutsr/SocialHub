@@ -31,7 +31,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'ngCordova'])
 
   $stateProvider
 
-    .state('app', {
+  .state('app', {
     url: '/app',
     abstract: true,
     templateUrl: 'templates/menu.html',
@@ -95,7 +95,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'ngCordova'])
     views: {
       'menuContent': {
         templateUrl: 'templates/playlist.html',
-        controller: 'PlaylistCtrl'
+        controller: 'PlaylistsCtrl'
       }
     }
   });

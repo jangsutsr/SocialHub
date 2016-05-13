@@ -143,22 +143,32 @@ angular.module('starter.controllers', [])
     }
 
     $scope.options =  [{
-        "name" : "Technology"
+        "name" : "Category Filter",
+        "value": ""
       },
       {
-        "name" : "Sport"
+        "name" : "Technology",
+        "value": "Technology"
       },
       {
-        "name" : "Science"
+        "name" : "Sport",
+        "value": "Sport"
       },
       {
-        "name" : "News"
+        "name" : "Science",
+        "value": "Science"
       },
       {
-        "name" : "Music"
+        "name" : "News",
+        "value": "News"
       },
       {
-        "name" : "Other"
+        "name" : "Music",
+        "value": "Music"
+      },
+      {
+        "name" : "Other",
+        "value": "Other"
       }];
 
     $scope.play = function(src) {
@@ -202,6 +212,9 @@ angular.module('starter.controllers', [])
             $ionicLoading.hide();
         }
     }
+
+    $scope.obj = pass.get();
+    
 })
 .controller('ProfileCtrl', function($scope, $http, $window) {
   $scope.TwitterAttach = function() {

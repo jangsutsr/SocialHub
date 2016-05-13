@@ -4,3 +4,6 @@
     margin-right: auto;
     display: block;
 }
+p.uppercase {
+    text-transform: uppercase;
+}
