@@ -1,23 +1,40 @@
 <ion-view view-title="New Arrival">
   <ion-content>
-  	<input ng-show="HaveNewPost" type="text" ng-model="test" placeholder="Filter" style="width: 100%;padding: 10px">
+  <label class="item item-input item-select" ng-show="HaveNewPost">
+    <div class="list list-inset" style="margin: 0px">
+      <label class="item-input" style="padding-left:5px">
+        <i class="icon ion-search placeholder-icon"></i>
+        <input type="text" placeholder="Search" style="padding-right: 0px" ng-model="test" >
+      </label>
+    </div>
+   <select ng-model="cate" ng-options="c.name for c in options" ng-init="cate=options[0]">
+    </select>
+  </label>
 
-    <ion-list>
-      <ion-item ng-repeat="playlist in newposts | filter : test" style="padding: 5px">
-        <div class="row">
-	      	<div class="col col-75" ng-click="detail({{playlist}})">
-	      		<p>{{playlist.author__name}}</p>
-	        	<p>{{playlist.message}}</p>
-	        </div>
-	        <div class="col">
-	        	<button class="button button-calm" ng-click="play({{playlist}})" style="float: right;">Play</button>
-	        </div>
-        </div>
-      </ion-item>
-      <label ng-hide="HaveNewPost">Havn't received any new post yet. Check out all posts in your Playlist!</label>
-    </ion-list>
+  <div class="list">
+    <a class="item item-avatar item-button-right" ng-repeat="playlist in playlists | filter: test | filter: {author__tag:cate.value}">  
+      <img src="{{playlist.author__img}}" ng-click="detail({{playlist}})">
+      <h2  ng-click="detail({{playlist}})">{{playlist.author__name}} <i class="icon ion-social-{{playlist.category}}-outline"></i></h2>
+      <p  ng-click="detail({{playlist}})">{{playlist.message}}</p>
+      <button class="button button-energized" style="margin-top:12px" ng-click="play({{playlist}})">
+        <i class="icon ion-play"></i>
+      </button>
+    </a>
+  </div>
+
+  <div class="list card" ng-hide="HaveNewPost">
+
+    <div class="item item-body">
+      <img class="full-image" src="img/wait.jpg">
+      <center><h2>Havn't received any new post yet. </h2>
+      <h2> Check out all posts in your Playlist!
+      </h2></center>
+    </div>
+
+  </div>
+      <label ></label>
 
   </ion-content>
-
-
 </ion-view>
+
+
