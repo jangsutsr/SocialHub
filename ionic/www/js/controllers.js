@@ -103,10 +103,10 @@ angular.module('starter.controllers', [])
            template: 'Successfully Create the New User!'
         });
 
-        // alertPopup.then(function(res) {
-        //   $scope.closeRegister();
-        //   $scope.login();
-        // });
+        alertPopup.then(function(res) {
+          $scope.closeRegister();
+          $scope.login();
+        });
 
       }, function errorCallback(response) {
         var alertPopup = $ionicPopup.alert({
@@ -124,6 +124,17 @@ angular.module('starter.controllers', [])
       $http.get(serverURL+"/history/0")
         .then(function(response) {
             $scope.playlists = response.data;
+            for (var i = $scope.playlists.length - 1; i >= 0; i--) {
+              var msg = $scope.playlists[i].message;
+              if (msg.indexOf("https://")!=-1){
+                $scope.playlists[i].url = msg.substring(msg.indexOf("https://"));
+                $scope.playlists[i].message = msg.substring(0, msg.indexOf("https://"));
+                $scope.playlists[i].hasLink = true;
+              }
+              else
+                $scope.playlists[i].hasLink = false;
+            }
+            console.log($scope.playlists);
       });  
     } else if ($state.current.name == 'app.newpost') {
       $http.get(serverURL+"/show")
@@ -200,6 +211,16 @@ angular.module('starter.controllers', [])
 
     }
 
+    $scope.playall = function(all) {
+      console.log(all);
+      src = "";
+      for (var i = 3; i <= Math.min(4, all.length-1); i++) {
+        src = src + all[i].message + ". . . ";
+      }
+      console.log(src);
+      $scope.play({'message':src});
+    }
+
     $scope.detail = function(obj) {
         $location.path('/app/playlists/'+obj.text);
         pass.set(obj);
@@ -213,8 +234,6 @@ angular.module('starter.controllers', [])
         }
     }
 
-    $scope.obj = pass.get();
-    
 })
 .controller('ProfileCtrl', function($scope, $http, $window) {
   $scope.TwitterAttach = function() {
@@ -283,11 +302,58 @@ angular.module('starter.controllers', [])
     };
 })
 
+.controller('PlaylistCtrl', function($window, $scope, $stateParams, pass, $http, $cordovaMedia, $ionicLoading) {
 
+    var obj = pass.get();
 
-.controller('PlaylistCtrl', function($scope, $stateParams, pass) {
-    console.log(pass.get().text);
-    $scope.obj = pass.get();
+    $http.get(serverURL+"/sentiment?data="+obj.message)
+      .then(function(response) {
+      obj.img = response.data + Math.floor((Math.random() * 4) + 1).toString();
+      $scope.obj = obj;
+    });  
+
+    $scope.play = function(src) {
+      console.log($scope.obj.message);
+      url = serverURL+"/audio?data="+$scope.obj.message;
+
+      var fileTransfer = new FileTransfer();
+      var uri = encodeURI(url);
+      var fileURL = "cdvfile://localhost/temporary/" + "test.mp3"
+
+      fileTransfer.download(
+          uri, fileURL,
+          function(entry) {
+              console.log("download complete: " + entry.toURL());
+                var media = new Media("cdvfile://localhost/temporary/test.mp3", null, null, mediaStatusCallback);
+                $cordovaMedia.play(media);
+          },
+          function(error) {
+              console.log("download error source " + error.source);
+              console.log("download error target " + error.target);
+              console.log("upload error code" + error.code);
+          }, false,
+          {
+              headers: {
+                  "Authorization": "Basic dGVzdHVzZXJuYW1lOnRlc3RwYXNzd29yZA=="
+              }
+          }
+    );
+
+      var mediaStatusCallback = function(status) {
+          if(status == 1) {
+              $ionicLoading.show({template: 'Loading...'});
+          } else {
+              $ionicLoading.hide();
+          }
+      }
+
+    }
+
+    $scope.readmore = function(obj) {
+        console.log($scope.obj.url);
+        window.cordova.InAppBrowser.open(obj.url, "_blank", 'location=no');
+    }
+
 });
 
 

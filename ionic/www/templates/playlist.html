@@ -14,13 +14,17 @@
 	  </div>
 
 	  <div class="item item-body">
-	    <img class="full-image" src="img/sample.jpg">
+	    <img class="full-image" src="img/{{obj.img}}.jpg">
 	    <p>
 	      {{obj.message}}
 	    </p>
+		<a class="item item-icon-left assertive" ng-click="readmore({{obj}})" ng-show="obj.hasLink">
+			<i class="icon ion-play"></i>
+		    Read More
+		</a>
 		<a class="item item-icon-left assertive" ng-click="play({{obj}})">
 			<i class="icon ion-play"></i>
-		    Read Out
+		    Speak Out
 		</a>
 	  </div>
 

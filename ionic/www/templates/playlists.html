@@ -1,23 +1,28 @@
 <ion-view view-title="All Posts">
   <ion-content>
   <label class="item item-input item-select">
+   <select ng-model="cate" ng-options="c.name for c in options" ng-init="cate=options[0]">
+    </select>
     <div class="list list-inset" style="margin: 0px">
       <label class="item-input" style="padding-left:5px">
         <i class="icon ion-search placeholder-icon"></i>
-        <input type="text" placeholder="Search" style="padding-right: 0px" ng-model="test" >
+        <input type="text" placeholder="Search" style="padding-right: 0px;width: 150px" ng-model="test" >
       </label>
     </div>
-   <select ng-model="cate" ng-options="c.name for c in options" ng-init="cate=options[0]">
-    </select>
   </label>
 
+
   <div class="list">
+      <button class="button button-energized" ng-click="playall(playlists)" style="margin: 10px;margin-left: 20px;width: 89%">
+        READ ALL POSTS
+        <i class="icon ion-volume-high" style="margin-left: 15px"></i>
+      </button>
     <a class="item item-avatar item-button-right" ng-repeat="playlist in playlists | filter: test | filter: {author__tag:cate.value}">  
       <img src="{{playlist.author__img}}" ng-click="detail({{playlist}})">
-      <h2  ng-click="detail({{playlist}})">{{playlist.author__name}}</h2>
+      <h2  ng-click="detail({{playlist}})">{{playlist.author__name}} <i class="icon ion-social-{{playlist.category}}-outline"></i></h2>
       <p  ng-click="detail({{playlist}})">{{playlist.message}}</p>
       <button class="button button-energized" style="margin-top:12px" ng-click="play({{playlist}})">
-        <i class="icon ion-play"></i>
+        <i class="icon ion-ios-play"></i>
       </button>
     </a>
   </div>
